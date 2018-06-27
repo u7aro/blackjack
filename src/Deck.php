@@ -1,5 +1,7 @@
 <?php
 
+namespace Blackjack;
+
 class Deck {
   private $cards = [];
 

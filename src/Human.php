@@ -1,5 +1,7 @@
 <?php
 
+namespace Blackjack;
+
 class Human extends Player {
   function isContinue() {
     do {

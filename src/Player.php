@@ -1,5 +1,7 @@
 <?php
 
+namespace Blackjack;
+
 class Player {
   private $isFinished = FALSE;
   private $cards = [];

@@ -1,15 +1,12 @@
 <?php
 
-require_once 'Deck.inc';
-require_once 'Player.inc';
-require_once 'Human.inc';
-require_once 'Cpu.inc';
+require 'vendor/autoload.php';
 
-$deck = new Deck;
+$deck = new Blackjack\Deck;
 
 $players = [];
-$players[0] = new Human;
-$players[1] = new Cpu;
+$players[0] = new Blackjack\Human;
+$players[1] = new Blackjack\Cpu;
 
 // 各プレイヤーに2枚ずつカードを配る.
 for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
