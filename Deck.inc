@@ -4,7 +4,8 @@ class Deck {
   private $cards = [];
 
   function __construct() {
-    $this->reset();
+    $this->generateCards();
+    shuffle($this->cards);
   }
 
   function generateCards($num_decks = 1) {
@@ -17,11 +18,6 @@ class Deck {
         $this->cards[] = $card;
       }
     }
-  }
-
-  function reset() {
-    $this->generateCards();
-    shuffle($this->cards);
   }
 
   function pullCard() {
