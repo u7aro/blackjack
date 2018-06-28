@@ -3,20 +3,20 @@
 namespace Blackjack;
 
 abstract class Player implements GameCommunication {
-  private $isFinished = FALSE;
+  private $isStanding = FALSE;
   private $cards = [];
   private $sum = 0;
 
-  function receiveCard($card) {
+  public function receiveCard($card) {
     $this->cards[] = $card;
     $this->calculateSum();
   }
 
-  function getCards() {
+  public function getCards() {
     return $this->cards;
   }
 
-  function getSum() {
+  public function getSum() {
     return $this->sum;
   }
 
@@ -53,11 +53,11 @@ abstract class Player implements GameCommunication {
     $this->sum = $card_sum;
   }
 
-  function isFinished() {
-    return $this->isFinished;
+  public function isStanding() {
+    return $this->isStanding;
   }
 
-  function setFinished() {
-    $this->isFinished = TRUE;
+  public function setStanding() {
+    $this->isStanding = TRUE;
   }
 }

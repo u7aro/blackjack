@@ -3,5 +3,5 @@
 namespace Blackjack;
 
 interface GameCommunication {
-  public function isContinue();
+  public function hits();
 }

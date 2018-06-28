@@ -3,7 +3,7 @@
 namespace Blackjack;
 
 class Human extends Player {
-  function isContinue() {
+  function hits() {
     do {
       print_r($this->getCards());
       print "Current point: " . $this->getSum() . "\n";

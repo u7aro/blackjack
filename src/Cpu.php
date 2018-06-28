@@ -3,7 +3,7 @@
 namespace Blackjack;
 
 class Cpu extends Player {
-  function isContinue() {
+  function hits() {
     if ($this->getSum() < 18) {
       return TRUE;
     }

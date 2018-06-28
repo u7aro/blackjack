@@ -21,21 +21,21 @@ do {
     // ソースコードを見やすくするためオブジェクト参照を参照している変数を $player にする.
     $player = $players[$player_i];
 
-    if (!$player->isFinished()) {
-      if ($player->isContinue()) {
+    if (!$player->isStanding()) {
+      if ($player->hits()) {
         $card = $deck->pullCard();
         $player->receiveCard($card);
         // 21が成立した場合、バーストした場合は強制的に終了.
         if (21 < $player->getSum()) {
-          $player->setFinished();
+          $player->setStanding();
         }
       }
       else {
-        $player->setFinished();
+        $player->setStanding();
       }
     }
   }
-} while (!$players[0]->isFinished() || !$players[1]->isFinished());
+} while (!$players[0]->isStanding() || !$players[1]->isStanding());
 
 print "RESULT -- \n";
 for ($player_i = 0; $player_i < 2; $player_i++) {
