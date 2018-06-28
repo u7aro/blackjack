@@ -12,7 +12,7 @@ $players[1] = new Blackjack\Cpu;
 for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
   for ($player_i = 0; $player_i < 2; $player_i++) {
     $card = $deck->pullCard();
-    $players[$player_i]->receiveCard($card);
+    $players[$player_i]->addCard($card);
   }
 }
 
@@ -24,7 +24,7 @@ do {
     if (!$player->isStanding()) {
       if ($player->hits()) {
         $card = $deck->pullCard();
-        $player->receiveCard($card);
+        $player->addCard($card);
         // 21が成立した場合、バーストした場合は強制的に終了.
         if (21 < $player->getSum()) {
           $player->setStanding();

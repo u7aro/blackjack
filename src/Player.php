@@ -7,7 +7,7 @@ abstract class Player implements GameCommunication {
   private $cards = [];
   private $sum = 0;
 
-  public function receiveCard($card) {
+  public function addCard($card) {
     $this->cards[] = $card;
     $this->calculateSum();
   }
