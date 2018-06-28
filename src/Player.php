@@ -2,7 +2,7 @@
 
 namespace Blackjack;
 
-abstract class Player {
+abstract class Player implements GameCommunication {
   private $isFinished = FALSE;
   private $cards = [];
   private $sum = 0;
@@ -51,10 +51,6 @@ abstract class Player {
     }
 
     $this->sum = $card_sum;
-  }
-
-  function isContinue() {
-    return FALSE;
   }
 
   function isFinished() {
