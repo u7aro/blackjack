@@ -2,7 +2,7 @@
 
 namespace Blackjack;
 
-class Player {
+abstract class Player {
   private $isFinished = FALSE;
   private $cards = [];
   private $sum = 0;
