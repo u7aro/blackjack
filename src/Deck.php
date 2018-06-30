@@ -2,28 +2,37 @@
 
 namespace Blackjack;
 
+/**
+ * カードのデッキを制御するためのクラス.
+ */
 class Deck {
   private $cards = [];
 
-  function __construct() {
-    $this->generateCards();
+  /**
+   * Deck オブジェクトを構築します.
+   *
+   * @param int $num_decks
+   *   生成するデッキの数.
+   */
+  public function __construct($num_decks = 1) {
+    $this->generateCards($num_decks);
     shuffle($this->cards);
   }
 
   /**
-   * ジョーカー以外のカードのデッキを指定された数だけ生成する.
+   * 指定された数のカードデッキ(ジョーカーを除いた52枚のカード)を生成します.
    *
-   * @param integer $num_decks
+   * @param int $num_decks
    *   生成するデッキの数.
    */
-  function generateCards($num_decks = 1) {
-    // Symbol meaning
-    // S: Spade, D: Diamond, H: Heart, C: Club
-    $suits = ['S', 'D', 'H', 'C'];
-    foreach ($suits as $suit) {
-      for ($card_i = 1; $card_i <= 13; $card_i++) {
-        $card = $suit . '-' . $card_i;
-        $this->cards[] = $card;
+  public function generateCards($num_decks) {
+    for ($num_decks_i = 0; $num_decks_i < $num_decks; $num_decks_i++) {
+      // 各アルファベットの意味:
+      //   S: スペード, D: ダイヤ, H: ハート, C: クラブ
+      foreach (['S', 'D', 'H', 'C'] as $suit) {
+        for ($number_i = 1; $number_i <= 13; $number_i++) {
+          $this->cards[] = new Card($suit, $number_i);
+        }
       }
     }
   }
@@ -33,7 +42,7 @@ class Deck {
    *
    * @return string `A-11` の様なハイフンで区切ったシンボルと数値の組み合わせ.
    */
-  function pullCard() {
+  public function pullCard() {
     return array_shift($this->cards);
   }
 
@@ -42,7 +51,7 @@ class Deck {
    *
    * @return array デッキに残っているカード全ての配列.
    */
-  function getCards() {
+  public function getCards() {
     return $this->cards;
   }
 }

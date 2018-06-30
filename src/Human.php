@@ -2,22 +2,26 @@
 
 namespace Blackjack;
 
+/**
+ * 人が Hit/Stand を入力して操作するプレイヤー用のクラス.
+ */
 class Human extends Player {
+
   function hits() {
     do {
-      print_r($this->getCards());
-      print "Current point: " . $this->getSum() . "\n";
+      Game::showHand($this->getCards());
       print 'カードを引きますか? (y/n): ';
 
       $input_string = rtrim(fgets(STDIN), "\n");
       if ($input_string == 'y' || $input_string == 'Y') {
-        $continue = TRUE;
+        $hit = TRUE;
       }
       elseif ($input_string == 'n' || $input_string == 'N') {
-        $continue = FALSE;
+        $hit = FALSE;
       }
-    } while (!isset($continue));
+    } while (!isset($hit));
 
-    return $continue;
+    return $hit;
   }
+
 }
