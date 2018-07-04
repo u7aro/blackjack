@@ -14,6 +14,23 @@ class Human extends Player {
     return 'あなた';
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function addCard($card) {
+    parent::addCard($card);
+    print $card->getString() . "を引きました\n";
+
+    // バーストした場合は出力して伝える.
+    $sum = Game::calculateSum($this->getCards());
+    if (21 < $sum) {
+      print '合計が' . $sum . "になりバーストしました\n";
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function hits() {
     do {
       Game::showHand($this->getCards());

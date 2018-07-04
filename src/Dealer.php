@@ -25,6 +25,9 @@ class Dealer extends Player {
     sleep(1);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function addCard($card) {
     // 1名目の場合は手札を公開(出力)する.
     if (empty($this->getCards())) {
@@ -33,6 +36,9 @@ class Dealer extends Player {
     parent::addCard($card);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function hits() {
     $sum = Game::calculateSum($this->getCards());
 
