@@ -21,7 +21,7 @@ class Dealer extends Player {
    *   発言する内容のテキスト.
    */
   public function say($string) {
-    print $this->getName() . ': ' . $string . "\n";
+    print "\033[0;31m" . $this->getName() . ': ' . $string . "\033[0m\n";
     sleep(1);
   }
 
