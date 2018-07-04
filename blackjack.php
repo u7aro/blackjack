@@ -21,6 +21,10 @@ $game->addPlayer($dealer);
 $human = New Human;
 $game->addPlayer($human);
 
+// 3人以上のプレイヤーを追加することも可能.
+// $ai = New Ai;
+// $game->addPlayer($ai);
+
 $game->setNumDecks(1);
 
 $game->start();

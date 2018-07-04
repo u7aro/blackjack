@@ -3,7 +3,7 @@
 namespace Blackjack;
 
 /**
- * ゲームを行う.
+ * プレイヤーへのカードの受け渡しや勝敗の判定などゲーム全体のコントロールを行う.
  */
 class Game {
 
@@ -18,7 +18,7 @@ class Game {
   private $num_decks = 1;
 
   /**
-   * 渡された手札から合計値を計算して返す. エースを含む場合は21に近い数値を返す.
+   * 渡された手札から合計値を計算して返す. エースを含む場合は21に近い役で数値を返す.
    *
    * @param array $cards
    *   Card クラスで生成されたインスタンスオブジェクトの配列.
@@ -116,13 +116,15 @@ class Game {
    *   全てのプレイヤーがスタンド状態であれば TRUE 、そうではない場合は FALSE.
    */
   private function isEveryPlayerStanding() {
-    // 一人でもゲームを続行している状態であれば、即時 FALSE を返す.
+    // ゲームに参加しているプレイヤーが一人でもゲームを続行している状態であれば、
+    // 即時 FALSE を返す.
     foreach ($this->players as $player) {
       if (!$player->isStanding()) {
         return FALSE;
       }
     }
 
+    // 誰もゲームを続行していなければループを抜けて TRUE を返す.
     return TRUE;
   }
 
@@ -140,6 +142,7 @@ class Game {
       }
     }
 
+    // 全員がスタンド（カードを引くのをやめた）状態になるまで繰り返しカードを引かせる.
     do {
       foreach ($this->players as $player) {
         if (!$player->isStanding()) {
@@ -147,7 +150,6 @@ class Game {
             $card = $deck->pullCard();
             $player->addCard($card);
             // 21が成立した場合、バーストした場合は強制的に終了.
-            // if (21 < $player->getSum()) {
             if (21 < Game::calculateSum($player->getCards())) {
               $player->setStanding();
             }

@@ -26,7 +26,7 @@ abstract class Player implements GameCommunication {
    * @return array
    *   Card クラスで生成したインスタンスオブジェクトの配列.
    */
-  public function getCards() {
+  final public function getCards() {
     return $this->cards;
   }
 
@@ -36,14 +36,14 @@ abstract class Player implements GameCommunication {
    * @return bool
    *   スタンド状態であれば TRUE、そうでなければ FALSE.
    */
-  public function isStanding() {
+  final public function isStanding() {
     return $this->isStanding;
   }
 
   /**
    * スタンド状態にする.
    */
-  public function setStanding() {
+  final public function setStanding() {
     $this->isStanding = TRUE;
   }
 
