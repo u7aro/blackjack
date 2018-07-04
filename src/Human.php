@@ -7,7 +7,14 @@ namespace Blackjack;
  */
 class Human extends Player {
 
-  function hits() {
+  /**
+   * 名前を返す.
+   */
+  public function getName() {
+    return 'あなた';
+  }
+
+  public function hits() {
     do {
       Game::showHand($this->getCards());
       print 'カードを引きますか? (y/n): ';

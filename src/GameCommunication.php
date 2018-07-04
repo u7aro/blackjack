@@ -18,4 +18,9 @@ interface GameCommunication {
    *   `A-11` のフォーマットで生成されたテキストのカード文字列.
    */
   public function addCard($card);
+
+  /**
+   * プレイヤーの名前を返す.
+   */
+  public function getName();
 }
