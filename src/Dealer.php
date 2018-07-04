@@ -8,7 +8,7 @@ namespace Blackjack;
 class Dealer extends Player {
 
   /**
-   * 名前を返す.
+   * {@inheritdoc}
    */
   public function getName() {
     return 'ディーラー';

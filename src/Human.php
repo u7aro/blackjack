@@ -8,7 +8,7 @@ namespace Blackjack;
 class Human extends Player {
 
   /**
-   * 名前を返す.
+   * {@inheritdoc}
    */
   public function getName() {
     return 'あなた';
