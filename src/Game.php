@@ -30,16 +30,16 @@ class Game {
    * ロゴを出力する.
    */
   public function printLogo() {
-    print "\n";
-    print "===================================================================================================\n";
-    print "   ______   _____          _        ______  ___  ____      _____     _        ______  ___  ____    \n";
-    print "  |_   _ \ |_   _|        / \     .' ___  ||_  ||_  _|    |_   _|   / \     .' ___  ||_  ||_  _|   \n";
-    print "    | |_) |  | |         / _ \   / .'   \_|  | |_/ /        | |    / _ \   / .'   \_|  | |_/ /     \n";
-    print "    |  __'.  | |   _    / ___ \  | |         |  __'.    _   | |   / ___ \  | |         |  __'.     \n";
-    print "   _| |__) |_| |__/ | _/ /   \ \_\ `.___.'\ _| |  \ \_ | |__' | _/ /   \ \_\ `.___.'\ _| |  \ \_   \n";
-    print "  |_______/|________||____| |____|`.____ .'|____||____|`.____.'|____| |____|`.____ .'|____||____|  \n";
-    print "                                                                                                   \n";
-    print "===================================================================================================\n";
+    \cli\line();
+    \cli\line("===================================================================================================");
+    \cli\line("   ______   _____          _        ______  ___  ____      _____     _        ______  ___  ____    ");
+    \cli\line("  |_   _ \ |_   _|        / \     .' ___  ||_  ||_  _|    |_   _|   / \     .' ___  ||_  ||_  _|   ");
+    \cli\line("    | |_) |  | |         / _ \   / .'   \_|  | |_/ /        | |    / _ \   / .'   \_|  | |_/ /     ");
+    \cli\line("    |  __'.  | |   _    / ___ \  | |         |  __'.    _   | |   / ___ \  | |         |  __'.     ");
+    \cli\line("   _| |__) |_| |__/ | _/ /   \ \_\ `.___.'\ _| |  \ \_ | |__' | _/ /   \ \_\ `.___.'\ _| |  \ \_   ");
+    \cli\line("  |_______/|________||____| |____|`.____ .'|____||____|`.____.'|____| |____|`.____ .'|____||____|  ");
+    \cli\line("                                                                                                   ");
+    \cli\line("===================================================================================================");
   }
 
   /**
@@ -167,19 +167,16 @@ class Game {
   }
 
   public function printAllHands($is_players_turn = FALSE) {
-    print "\n";
-    print $this->dealer->getName() . ': ';
-    print game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
+    \cli\line();
+    \cli\line($this->dealer->getName() . ': ' . game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn));
     if (!$is_players_turn) {
-      print ' (' . game::formatCardsPoint($this->dealer->getCards()) . ')';
+      \cli\line(' (' . game::formatCardsPoint($this->dealer->getCards()) . ')');
     }
-    print "\n";
 
     foreach ($this->players as $player) {
-      print $player->getName() . ': '
+      \cli\line($player->getName() . ': '
         . game::formatPlayerHand($player->getCards())
-      . ' (' . game::formatCardsPoint($player->getCards()) . ')'
-      . "\n";
+        . ' (' . game::formatCardsPoint($player->getCards()) . ')');
     }
   }
 
@@ -239,7 +236,7 @@ class Game {
       } while (!$this->isEveryPlayerStanding());
 
       // ディーラーのターン.
-      print "\n" . $this->dealer->getName() . "のターンです\n";
+      \cli\line("\n" . $this->dealer->getName() . "のターンです");
       while ($this->dealer->hits()) {
         $this->printAllHands();
         $card = $this->deck->pullCard();
@@ -247,16 +244,16 @@ class Game {
       }
 
       // 勝敗の表示.
-      print "\n-- RESULT --\n";
-      print $this->dealer->getName() . ': ' .game::formatPlayerHand($this->dealer->getCards()) . "\n";
+      \cli\line("\n-- RESULT --");
+      $message = $this->dealer->getName() . ': ' .game::formatPlayerHand($this->dealer->getCards());
+      \cli\line($message);
       foreach ($this->players as $player) {
         $status = $this->isPlayerWin($player);
-        print $player->getName() . ' ... ' . $status . "\n";
+        \cli\line($player->getName() . ' ... ' . $status);
       }
-      print "\n";
 
       unset($continue);
-      $continue = \cli\choose('ゲームを続行しますか', 'yn', 'y');
+      $continue = \cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
     } while($continue);
   }
 

@@ -14,14 +14,14 @@ class Dealer extends Player {
    *   発言する内容のテキスト.
    */
   public function say($string) {
-    print "\033[0;31m" . $this->getName() . ': ' . $string . "\033[0m\n";
+    \cli\line($this->getName() . ': ' . $string);
   }
 
   /**
    * {@inheritdoc}
    */
   public function hits() {
-    print "\n";
+    \cli\line();
     $sum = Game::calculateSum($this->getCards());
     sleep(1);
     if ($sum < 17) {
