@@ -140,7 +140,7 @@ class Game {
     return TRUE;
   }
 
-  public function formatPlayerHands(array $cards, $first_card_hides = FALSE) {
+  public function formatPlayerHand(array $cards, $first_card_hides = FALSE) {
     $string = '';
     foreach ($cards as $card) {
       if ($first_card_hides && empty($string)) {
@@ -169,7 +169,7 @@ class Game {
   public function printAllHands($is_players_turn = FALSE) {
     print "\n";
     print $this->dealer->getName() . ': ';
-    print game::formatPlayerHands($this->dealer->getCards(), $first_card_hides = $is_players_turn);
+    print game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
     if (!$is_players_turn) {
       print ' (' . game::formatCardsPoint($this->dealer->getCards()) . ')';
     }
@@ -177,10 +177,26 @@ class Game {
 
     foreach ($this->players as $player) {
       print $player->getName() . ': '
-        . game::formatPlayerHands($player->getCards())
+        . game::formatPlayerHand($player->getCards())
       . ' (' . game::formatCardsPoint($player->getCards()) . ')'
       . "\n";
     }
+  }
+
+  public function isPlayerWin(Player $player) {
+    $dealer_sum = game::calculateSum($this->dealer->getCards());
+    $player_sum = game::calculateSum($player->getCards());
+
+    // プレイヤーがバストした場合またはディーラーのポイントを下回る場合は負け.
+    if (21 < $player_sum || ($dealer_sum <= 21 && $player_sum < $dealer_sum)) {
+      return 'lose';
+    }
+    // ディーラーがバストした場合またはディーラーのポイントを上回った場合は勝ち.
+    elseif (21 < $dealer_sum || $dealer_sum < $player_sum) {
+      return 'win';
+    }
+
+    return 'draw';
   }
 
   /**
@@ -228,8 +244,13 @@ class Game {
       $this->dealer->addCard($card);
     }
 
+    // 勝敗の表示.
     print "\n-- RESULT --\n";
-    $this->printAllHands();
+    print $this->dealer->getName() . ': ' .game::formatPlayerHand($this->dealer->getCards()) . "\n";
+    foreach ($this->players as $player) {
+      $status = $this->isPlayerWin($player);
+      print $player->getName() . ' ... ' . $status . "\n";
+    }
     print "\n";
   }
 
