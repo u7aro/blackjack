@@ -24,9 +24,7 @@ $human = New Human('あなた');
 $game->addPlayer($human);
 
 // 2人以上のプレイヤーを追加することも可能.
-$human = New Human('Player 2');
-$game->addPlayer($human);
-// $ai_player = New AiPlayer('AI Player');
-// $game->addPlayer($ai_player);
+$ai_player = New AiPlayer('AI Player');
+$game->addPlayer($ai_player);
 
 $game->start();
