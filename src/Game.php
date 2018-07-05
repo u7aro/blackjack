@@ -256,17 +256,7 @@ class Game {
       print "\n";
 
       unset($continue);
-      do {
-        print 'ゲームを続けますか? (y/n): ';
-
-        $input_string = rtrim(fgets(STDIN), "\n");
-        if ($input_string == 'y' || $input_string == 'Y') {
-          $continue = TRUE;
-        }
-        elseif ($input_string == 'n' || $input_string == 'N') {
-          $continue = FALSE;
-        }
-      } while (!isset($continue));
+      $continue = \cli\choose('ゲームを続行しますか', 'yn', 'y');
     } while($continue);
   }
 

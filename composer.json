@@ -3,5 +3,8 @@
       "psr-4": {
           "Blackjack\\": "src/"
       }
+  },
+  "require": {
+    "wp-cli/php-cli-tools": "^0.11.9"
   }
 }

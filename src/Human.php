@@ -25,19 +25,10 @@ class Human extends Player {
    */
   public function hits() {
     print "\n";
-    do {
-      print $this->getName() . 'はカードを引きますか? (y/n): ';
 
-      $input_string = rtrim(fgets(STDIN), "\n");
-      if ($input_string == 'y' || $input_string == 'Y') {
-        $hit = TRUE;
-      }
-      elseif ($input_string == 'n' || $input_string == 'N') {
-        $hit = FALSE;
-      }
-    } while (!isset($hit));
-
-    return $hit;
+    $default_choice = (Game::calculateSum($this->getCards()) < 17) ? 'y' : 'n';
+    $question = $this->getName() . ': カードを引きますか';
+    return \cli\choose($question, 'yn', $default_choice) == 'y';
   }
 
 }
