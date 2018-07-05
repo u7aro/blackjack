@@ -3,10 +3,6 @@
 /**
  * @file
  * Blackjack を開始するためのメインファイル.
- *
- * CLI上から次のようにコマンドを実行して起動する.
- *
- * php main.php
  */
 
 namespace Blackjack;
