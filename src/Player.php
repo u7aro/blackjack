@@ -56,4 +56,12 @@ abstract class Player implements GameCommunication {
     $this->isStanding = TRUE;
   }
 
+  /**
+   * プレイヤーの状態を初期化する.
+   */
+  final public function init() {
+    $this->cards = [];
+    $this->isStanding = FALSE;
+  }
+
 }

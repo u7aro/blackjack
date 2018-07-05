@@ -205,53 +205,69 @@ class Game {
   public function start() {
     $this->printLogo();
 
-    // ディーラーとプレイヤーにカードを2枚ずつ配る.
-    // Note: ディーラーとプレイヤーは同じ抽象クラスを継承しているため、同じメソッドが
-    // 利用できる.
-    $participants = array_merge([$this->dealer], $this->players);
-    for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
-      foreach ($participants as $participant) {
-        $card = $this->deck->pullCard();
-        $participant->addCard($card);
-      }
-    }
-
-    // 全員がスタンド（カードを引くのをやめた）状態になるまで繰り返しカードを引かせる.
     do {
-      foreach ($this->players as $player) {
-        $this->printAllHands($is_players_turn = TRUE);
-        if (!$player->isStanding()) {
-          if ($player->hits()) {
-            $card = $this->deck->pullCard();
-            $player->addCard($card);
-            // バストした場合は強制的に終了.
-            if (21 < Game::calculateSum($player->getCards())) {
+      // ディーラーとプレイヤーの状態を初期化してカードを2枚ずつ配る.
+      // Note: ディーラーとプレイヤーは同じ抽象クラスを継承しているため、同じメソッドが
+      // 利用できる.
+      $participants = array_merge([$this->dealer], $this->players);
+      foreach ($participants as $participant) {
+        $participant->init();
+        for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
+          $card = $this->deck->pullCard();
+          $participant->addCard($card);
+        }
+      }
+
+      // 全員がスタンド（カードを引くのをやめた）状態になるまで繰り返しカードを引かせる.
+      do {
+        foreach ($this->players as $player) {
+          $this->printAllHands($is_players_turn = TRUE);
+          if (!$player->isStanding()) {
+            if ($player->hits()) {
+              $card = $this->deck->pullCard();
+              $player->addCard($card);
+              // バストした場合は強制的に終了.
+              if (21 < Game::calculateSum($player->getCards())) {
+                $player->setStanding();
+              }
+            }
+            else {
               $player->setStanding();
             }
           }
-          else {
-            $player->setStanding();
-          }
         }
+      } while (!$this->isEveryPlayerStanding());
+
+      // ディーラーのターン.
+      print "\n" . $this->dealer->getName() . "のターンです\n";
+      while ($this->dealer->hits()) {
+        $this->printAllHands();
+        $card = $this->deck->pullCard();
+        $this->dealer->addCard($card);
       }
-    } while (!$this->isEveryPlayerStanding());
 
-    // ディーラーのターン.
-    print "\n" . $this->dealer->getName() . "のターンです\n";
-    while ($this->dealer->hits()) {
-      $this->printAllHands();
-      $card = $this->deck->pullCard();
-      $this->dealer->addCard($card);
-    }
+      // 勝敗の表示.
+      print "\n-- RESULT --\n";
+      print $this->dealer->getName() . ': ' .game::formatPlayerHand($this->dealer->getCards()) . "\n";
+      foreach ($this->players as $player) {
+        $status = $this->isPlayerWin($player);
+        print $player->getName() . ' ... ' . $status . "\n";
+      }
+      print "\n";
 
-    // 勝敗の表示.
-    print "\n-- RESULT --\n";
-    print $this->dealer->getName() . ': ' .game::formatPlayerHand($this->dealer->getCards()) . "\n";
-    foreach ($this->players as $player) {
-      $status = $this->isPlayerWin($player);
-      print $player->getName() . ' ... ' . $status . "\n";
-    }
-    print "\n";
+      unset($continue);
+      do {
+        print 'ゲームを続けますか? (y/n): ';
+
+        $input_string = rtrim(fgets(STDIN), "\n");
+        if ($input_string == 'y' || $input_string == 'Y') {
+          $continue = TRUE;
+        }
+        elseif ($input_string == 'n' || $input_string == 'N') {
+          $continue = FALSE;
+        }
+      } while (!isset($continue));
+    } while($continue);
   }
 
 }
