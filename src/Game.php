@@ -8,14 +8,23 @@ namespace Blackjack;
 class Game {
 
   /**
+   * ディーラークラスのインスタンスオブジェクト.
+   */
+  private $dealer;
+
+  /**
    * 参加するプレイヤークラスを継承したインスタンスオブジェクトの配列.
    */
   private $players = [];
 
   /**
-   * デッキの数.
+   * ゲームで使用する Deck クラスのインスタンスオブジェクト.
    */
-  private $num_decks = 1;
+  protected $deck;
+
+  public function __construct($num_decks) {
+    $this->deck = new Deck($num_decks);
+  }
 
   /**
    * ロゴを出力する.
@@ -117,6 +126,16 @@ class Game {
   }
 
   /**
+   * ディーラーをゲームに追加する.
+   *
+   * @param object $dealer
+   *   ディーラー用クラスのインスタンスオブジェクト.
+   */
+  public function addDealer($dealer) {
+    $this->dealer = $dealer;
+  }
+
+  /**
    * 生成するデッキの数を設定.
    *
    * @param int $num_decks
@@ -150,12 +169,11 @@ class Game {
    */
   public function start() {
     $this->printLogo();
-    $deck = new Deck($this->num_decks);
 
     // 各プレイヤーに2枚ずつカードを配る.
     for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
       foreach ($this->players as $player) {
-        $card = $deck->pullCard();
+        $card = $this->deck->pullCard();
         $player->addCard($card);
       }
     }
@@ -165,7 +183,7 @@ class Game {
       foreach ($this->players as $player) {
         if (!$player->isStanding()) {
           if ($player->hits()) {
-            $card = $deck->pullCard();
+            $card = $this->deck->pullCard();
             $player->addCard($card);
             // 21が成立した場合、バーストした場合は強制的に終了.
             if (21 < Game::calculateSum($player->getCards())) {

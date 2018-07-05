@@ -9,23 +9,12 @@ class Deck {
   private $cards = [];
 
   /**
-   * Deck オブジェクトを構築します.
+   * 指定されたカードデッキの数だけカードを生成.
    *
    * @param int $num_decks
    *   生成するデッキの数.
    */
   public function __construct($num_decks = 1) {
-    $this->generateCards($num_decks);
-    shuffle($this->cards);
-  }
-
-  /**
-   * 指定された数のカードデッキ(ジョーカーを除いた52枚のカード)を生成します.
-   *
-   * @param int $num_decks
-   *   生成するデッキの数.
-   */
-  public function generateCards($num_decks) {
     for ($num_decks_i = 0; $num_decks_i < $num_decks; $num_decks_i++) {
       // 各アルファベットの意味:
       //   S: スペード, D: ダイヤ, H: ハート, C: クラブ
@@ -35,6 +24,8 @@ class Deck {
         }
       }
     }
+
+    shuffle($this->cards);
   }
 
   /**

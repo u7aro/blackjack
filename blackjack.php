@@ -13,18 +13,18 @@ namespace Blackjack;
 
 require 'vendor/autoload.php';
 
-$game = New Game;
+$num_decks = 1;
+$game = New Game($num_decks);
 
 // 規定のインターフェイス(GameCommunication)を持ったプレイヤーをゲームに追加.
 $dealer = New Dealer;
-$game->addPlayer($dealer);
+$game->addDealer($dealer);
+
 $human = New Human;
 $game->addPlayer($human);
 
-// 3人以上のプレイヤーを追加することも可能.
-// $ai = New Ai;
-// $game->addPlayer($ai);
-
-$game->setNumDecks(1);
+// 2人以上のプレイヤーを追加することも可能.
+// $ai_player = New AiPlayer;
+// $game->addPlayer($ai_player);
 
 $game->start();
