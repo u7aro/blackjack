@@ -21,7 +21,7 @@ interface GameCommunication {
    * @param object $card
    *   Card クラスのインスタンスオブジェクト.
    */
-  public function addCard($card);
+  public function addCard(Card $card);
 
   /**
    * プレイヤーの名前を返す.

@@ -51,7 +51,7 @@ class Game {
    * @return int
    *   手札の合計値.
    */
-  public function calculateSum($cards) {
+  public function calculateSum(array $cards) {
     $num_aces = 0;
     $point_sum = 0;
     foreach ($cards as $card) {
@@ -83,7 +83,7 @@ class Game {
    * @return int
    *   手札の合計値.
    */
-  public function calculateMinSum($cards) {
+  public function calculateMinSum(array $cards) {
     $point_sum = 0;
     foreach ($cards as $card) {
       $point_sum += $card->getPoint();
@@ -97,7 +97,7 @@ class Game {
    * @param object $player
    *   GameCommunication インターフェイスを実装したクラスのインスタンスオブジェクト.
    */
-  public function addPlayer($player) {
+  public function addPlayer(Player $player) {
     $this->players[] = $player;
   }
 
@@ -107,7 +107,7 @@ class Game {
    * @param object $dealer
    *   ディーラー用クラスのインスタンスオブジェクト.
    */
-  public function addDealer($dealer) {
+  public function addDealer(Dealer $dealer) {
     $this->dealer = $dealer;
   }
 
@@ -140,7 +140,7 @@ class Game {
     return TRUE;
   }
 
-  public function formatPlayerHands($cards, $first_card_hides = FALSE) {
+  public function formatPlayerHands(array $cards, $first_card_hides = FALSE) {
     $string = '';
     foreach ($cards as $card) {
       if ($first_card_hides && empty($string)) {
@@ -154,7 +154,7 @@ class Game {
     return $string;
   }
 
-  public function formatCardsPoint($cards) {
+  public function formatCardsPoint(array $cards) {
     $min_sum = Game::calculateMinSum($cards);
     $max_sum = Game::calculateSum($cards);
     if ($min_sum == $max_sum) {

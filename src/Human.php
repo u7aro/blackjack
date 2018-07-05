@@ -10,7 +10,7 @@ class Human extends Player {
   /**
    * {@inheritdoc}
    */
-  public function addCard($card) {
+  public function addCard(Card $card) {
     parent::addCard($card);
 
     // バーストした場合は出力して伝える.
