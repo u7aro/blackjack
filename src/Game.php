@@ -144,7 +144,7 @@ class Game {
     $string = '';
     foreach ($cards as $card) {
       if ($first_card_hides && empty($string)) {
-        $string .= '[??]';
+        $string .= '[???]';
       }
       else {
         $string .= '[' . $card->getString() . ']';
@@ -168,10 +168,12 @@ class Game {
 
   public function printAllHands($is_players_turn = FALSE) {
     \cli\line();
-    \cli\line($this->dealer->getName() . ': ' . game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn));
+    $message = $this->dealer->getName() . ': '
+      . game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
     if (!$is_players_turn) {
-      \cli\line(' (' . game::formatCardsPoint($this->dealer->getCards()) . ')');
+      $message .= ' (' . game::formatCardsPoint($this->dealer->getCards()) . ')';
     }
+    \cli\line($message);
 
     foreach ($this->players as $player) {
       \cli\line($player->getName() . ': '
