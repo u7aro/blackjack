@@ -9,6 +9,15 @@ abstract class Player implements GameCommunication {
 
   private $isStanding = FALSE;
   private $cards = [];
+  protected $name = '';
+
+  public function __construct($name = 'Player') {
+    $this->name = $name;
+  }
+
+  public function getName() {
+    return $this->name;
+  }
 
   /**
    * カードを追加.

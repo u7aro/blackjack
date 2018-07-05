@@ -40,7 +40,6 @@ class Game {
     print "  |_______/|________||____| |____|`.____ .'|____||____|`.____.'|____| |____|`.____ .'|____||____|  \n";
     print "                                                                                                   \n";
     print "===================================================================================================\n";
-    print "\n";
   }
 
   /**
@@ -93,29 +92,6 @@ class Game {
   }
 
   /**
-   * 渡されたカード配列を見やすくフォーマットして出力する.
-   *
-   * @param array
-   *   Card クラスのインスタンスオブジェクトが格納された配列.
-   */
-  public function showHand($cards) {
-    foreach ($cards as $card) {
-      print $card->getString() . ' ';
-    }
-
-    $min_sum = Game::calculateMinSum($cards);
-    $max_sum = Game::calculateSum($cards);
-    if ($min_sum == $max_sum) {
-      $point = $max_sum;
-    }
-    else {
-      $point = $min_sum . '/' . $max_sum;
-    }
-
-    print ': (' . $point . ")\n";
-  }
-
-  /**
    * プレイヤーをゲームに追加.
    *
    * @param object $player
@@ -164,28 +140,75 @@ class Game {
     return TRUE;
   }
 
+  public function formatPlayerHands($cards, $first_card_hides = FALSE) {
+    $string = '';
+    foreach ($cards as $card) {
+      if ($first_card_hides && empty($string)) {
+        $string .= '[??]';
+      }
+      else {
+        $string .= '[' . $card->getString() . ']';
+      }
+    }
+
+    return $string;
+  }
+
+  public function formatCardsPoint($cards) {
+    $min_sum = Game::calculateMinSum($cards);
+    $max_sum = Game::calculateSum($cards);
+    if ($min_sum == $max_sum) {
+      $point = $max_sum;
+    }
+    else {
+      $point = $min_sum . '/' . $max_sum;
+    }
+    return $point;
+  }
+
+  public function printAllHands($is_players_turn = FALSE) {
+    print "\n";
+    print $this->dealer->getName() . ': ';
+    print game::formatPlayerHands($this->dealer->getCards(), $first_card_hides = $is_players_turn);
+    if (!$is_players_turn) {
+      print ' (' . game::formatCardsPoint($this->dealer->getCards()) . ')';
+    }
+    print "\n";
+
+    foreach ($this->players as $player) {
+      print $player->getName() . ': '
+        . game::formatPlayerHands($player->getCards())
+      . ' (' . game::formatCardsPoint($player->getCards()) . ')'
+      . "\n";
+    }
+  }
+
   /**
    * ゲームを開始する.
    */
   public function start() {
     $this->printLogo();
 
-    // 各プレイヤーに2枚ずつカードを配る.
+    // ディーラーとプレイヤーにカードを2枚ずつ配る.
+    // Note: ディーラーとプレイヤーは同じ抽象クラスを継承しているため、同じメソッドが
+    // 利用できる.
+    $participants = array_merge([$this->dealer], $this->players);
     for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
-      foreach ($this->players as $player) {
+      foreach ($participants as $participant) {
         $card = $this->deck->pullCard();
-        $player->addCard($card);
+        $participant->addCard($card);
       }
     }
 
     // 全員がスタンド（カードを引くのをやめた）状態になるまで繰り返しカードを引かせる.
     do {
       foreach ($this->players as $player) {
+        $this->printAllHands($is_players_turn = TRUE);
         if (!$player->isStanding()) {
           if ($player->hits()) {
             $card = $this->deck->pullCard();
             $player->addCard($card);
-            // 21が成立した場合、バーストした場合は強制的に終了.
+            // バストした場合は強制的に終了.
             if (21 < Game::calculateSum($player->getCards())) {
               $player->setStanding();
             }
@@ -197,10 +220,17 @@ class Game {
       }
     } while (!$this->isEveryPlayerStanding());
 
-    print "RESULT -- \n";
-    foreach ($this->players as $player) {
-      Game::showHand($player->getCards());
+    // ディーラーのターン.
+    print "\n" . $this->dealer->getName() . "のターンです\n";
+    while ($this->dealer->hits()) {
+      $this->printAllHands();
+      $card = $this->deck->pullCard();
+      $this->dealer->addCard($card);
     }
+
+    print "\n-- RESULT --\n";
+    $this->printAllHands();
+    print "\n";
   }
 
 }

@@ -10,21 +10,13 @@ class Human extends Player {
   /**
    * {@inheritdoc}
    */
-  public function getName() {
-    return 'あなた';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function addCard($card) {
     parent::addCard($card);
-    print $card->getString() . "を引きました\n";
 
     // バーストした場合は出力して伝える.
     $sum = Game::calculateSum($this->getCards());
     if (21 < $sum) {
-      print '合計が' . $sum . "になりバーストしました\n";
+      print '合計が' . $sum . "になりバストしました\n";
     }
   }
 
@@ -32,9 +24,9 @@ class Human extends Player {
    * {@inheritdoc}
    */
   public function hits() {
+    print "\n";
     do {
-      Game::showHand($this->getCards());
-      print 'カードを引きますか? (y/n): ';
+      print $this->getName() . 'はカードを引きますか? (y/n): ';
 
       $input_string = rtrim(fgets(STDIN), "\n");
       if ($input_string == 'y' || $input_string == 'Y') {

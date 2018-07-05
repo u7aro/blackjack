@@ -8,13 +8,6 @@ namespace Blackjack;
 class Dealer extends Player {
 
   /**
-   * {@inheritdoc}
-   */
-  public function getName() {
-    return 'ディーラー';
-  }
-
-  /**
    * ディーラーに発言(標準出力)させる.
    *
    * @param string $string
@@ -22,26 +15,15 @@ class Dealer extends Player {
    */
   public function say($string) {
     print "\033[0;31m" . $this->getName() . ': ' . $string . "\033[0m\n";
-    sleep(1);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function addCard($card) {
-    // 1名目の場合は手札を公開(出力)する.
-    if (empty($this->getCards())) {
-      $this->say('1枚目のカードは' . $card->getString() . 'です');
-    }
-    parent::addCard($card);
   }
 
   /**
    * {@inheritdoc}
    */
   public function hits() {
+    print "\n";
     $sum = Game::calculateSum($this->getCards());
-
+    sleep(1);
     if ($sum < 17) {
       $this->say('Hit');
       return TRUE;

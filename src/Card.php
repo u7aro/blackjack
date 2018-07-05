@@ -51,6 +51,6 @@ class Card {
    *   - 'D5' ダイヤの5
    */
   public function getString() {
-    return '[' . $this->suit . $this->number . ']';
+    return $this->suit . $this->number;
   }
 }
