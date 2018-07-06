@@ -51,7 +51,7 @@ class Game {
    * @return int
    *   手札の合計値.
    */
-  public function calculateSum(array $cards) {
+  public static function calculateSum(array $cards) {
     $num_aces = 0;
     $point_sum = 0;
     foreach ($cards as $card) {
@@ -83,7 +83,7 @@ class Game {
    * @return int
    *   手札の合計値.
    */
-  public function calculateMinSum(array $cards) {
+  public static function calculateMinSum(array $cards) {
     $point_sum = 0;
     foreach ($cards as $card) {
       $point_sum += $card->getPoint();
@@ -140,7 +140,7 @@ class Game {
     return TRUE;
   }
 
-  public function formatPlayerHand(array $cards, $first_card_hides = FALSE) {
+  public static function formatPlayerHand(array $cards, $first_card_hides = FALSE) {
     $string = '';
     foreach ($cards as $card) {
       if ($first_card_hides && empty($string)) {
@@ -154,7 +154,7 @@ class Game {
     return $string;
   }
 
-  public function formatCardsPoint(array $cards) {
+  public static function formatCardsPoint(array $cards) {
     $min_sum = Game::calculateMinSum($cards);
     $max_sum = Game::calculateSum($cards);
     if ($min_sum == $max_sum) {
@@ -169,23 +169,23 @@ class Game {
   public function printAllHands($is_players_turn = FALSE) {
     \cli\line('==');
     $message = $this->dealer->getName() . ': '
-      . game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
+      . Game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
     if (!$is_players_turn) {
-      $message .= ' (' . game::formatCardsPoint($this->dealer->getCards()) . ')';
+      $message .= ' (' . Game::formatCardsPoint($this->dealer->getCards()) . ')';
     }
     \cli\line($message);
 
     foreach ($this->players as $player) {
       \cli\line($player->getName() . ': '
-        . game::formatPlayerHand($player->getCards())
-        . ' (' . game::formatCardsPoint($player->getCards()) . ')');
+        . Game::formatPlayerHand($player->getCards())
+        . ' (' . Game::formatCardsPoint($player->getCards()) . ')');
     }
     \cli\line('==');
   }
 
   public function isPlayerWin(Player $player) {
-    $dealer_sum = game::calculateSum($this->dealer->getCards());
-    $player_sum = game::calculateSum($player->getCards());
+    $dealer_sum = Game::calculateSum($this->dealer->getCards());
+    $player_sum = Game::calculateSum($player->getCards());
 
     // プレイヤーがバストした場合またはディーラーのポイントを下回る場合は負け.
     if (21 < $player_sum || ($dealer_sum <= 21 && $player_sum < $dealer_sum)) {
@@ -252,7 +252,7 @@ class Game {
 
       // 勝敗の表示.
       \cli\line("\n-- RESULT --");
-      $message = $this->dealer->getName() . ': ' .game::formatPlayerHand($this->dealer->getCards());
+      $message = $this->dealer->getName() . ': ' .Game::formatPlayerHand($this->dealer->getCards());
       \cli\line($message);
       foreach ($this->players as $player) {
         $status = $this->isPlayerWin($player);
