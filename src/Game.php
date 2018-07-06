@@ -2,6 +2,8 @@
 
 namespace Blackjack;
 
+use cli;
+
 /**
  * プレイヤーへのカードの受け渡しや勝敗の判定などゲーム全体のコントロールを行う.
  */
@@ -30,16 +32,17 @@ class Game {
    * ロゴを出力する.
    */
   public function printLogo() {
-    \cli\line();
-    \cli\line("===============================================================================================");
-    \cli\line(" ______   _____          _        ______  ___  ____      _____     _        ______  ___  ____  ");
-    \cli\line("|_   _ \ |_   _|        / \     .' ___  ||_  ||_  _|    |_   _|   / \     .' ___  ||_  ||_  _| ");
-    \cli\line("  | |_) |  | |         / _ \   / .'   \_|  | |_/ /        | |    / _ \   / .'   \_|  | |_/ /   ");
-    \cli\line("  |  __'.  | |   _    / ___ \  | |         |  __'.    _   | |   / ___ \  | |         |  __'.   ");
-    \cli\line(" _| |__) |_| |__/ | _/ /   \ \_\ `.___.'\ _| |  \ \_ | |__' | _/ /   \ \_\ `.___.'\ _| |  \ \_ ");
-    \cli\line("|_______/|________||____| |____|`.____ .'|____||____|`.____.'|____| |____|`.____ .'|____||____|");
-    \cli\line("                                                                                               ");
-    \cli\line("===============================================================================================");
+    cli\line();
+    cli\line("===============================================================================================");
+    cli\out("%y");
+    cli\line(" ______   _____          _        ______  ___  ____      _____     _        ______  ___  ____  ");
+    cli\line("|_   _ \ |_   _|        / \     .' ___  ||_  ||_  _|    |_   _|   / \     .' ___  ||_  ||_  _| ");
+    cli\line("  | |_) |  | |         / _ \   / .'   \_|  | |_/ /        | |    / _ \   / .'   \_|  | |_/ /   ");
+    cli\line("  |  __'.  | |   _    / ___ \  | |         |  __'.    _   | |   / ___ \  | |         |  __'.   ");
+    cli\line(" _| |__) |_| |__/ | _/ /   \ \_\ `.___.'\ _| |  \ \_ | |__' | _/ /   \ \_\ `.___.'\ _| |  \ \_ ");
+    cli\line("|_______/|________||____| |____|`.____ .'|____||____|`.____.'|____| |____|`.____ .'|____||____|");
+    cli\line("%n");
+    cli\line("===============================================================================================");
   }
 
   /**
@@ -167,20 +170,20 @@ class Game {
   }
 
   public function printAllHands($is_players_turn = FALSE) {
-    \cli\line('==');
+    cli\line('==');
     $message = $this->dealer->getName() . ': '
       . Game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
     if (!$is_players_turn) {
       $message .= ' (' . Game::formatCardsPoint($this->dealer->getCards()) . ')';
     }
-    \cli\line($message);
+    cli\line($message);
 
     foreach ($this->players as $player) {
-      \cli\line($player->getName() . ': '
+      cli\line($player->getName() . ': '
         . Game::formatPlayerHand($player->getCards())
         . ' (' . Game::formatCardsPoint($player->getCards()) . ')');
     }
-    \cli\line('==');
+    cli\line('==');
   }
 
   public function isPlayerWin(Player $player) {
@@ -199,6 +202,43 @@ class Game {
     return 'draw';
   }
 
+  public function getHandScoreText($cards) {
+    return Game::formatPlayerHand($cards)
+      . ' (' . Game::formatCardsPoint($cards) . ')';
+  }
+
+  public function dealCard(Player $player) {
+    if (!$player->isStanding()) {
+      if ($player->hits()) {
+        cli\line($player->getName() . ': %gHit%n');
+        $card = $this->deck->pullCard();
+        $player->addCard($card);
+
+        sleep(1);
+        cli\out($player->getName() . ': ' . Game::getHandScoreText($player->getCards()));
+
+        $sum = Game::calculateSum($player->getCards());
+        // ブラックジャック(21)とバストした場合は強制的に終了.
+        if (21 <= $sum) {
+          if ($sum == 21) {
+            cli\out(' ... %y%FBlackjack%n');
+          }
+          else {
+            cli\out(' ... %rBust!%n');
+          }
+          $player->setStanding();
+        }
+        cli\line();
+        sleep(1);
+      }
+      else {
+        $player->setStanding();
+        cli\line($player->getName() . ': %cStand%n');
+        sleep(1);
+      }
+    }
+  }
+
   /**
    * ゲームを開始する.
    */
@@ -207,7 +247,7 @@ class Game {
 
     $round = 1;
     do {
-      \cli\line('Round ' . $round . 'スタート');
+      cli\line('Round ' . $round . ' スタート');
 
       // ディーラーとプレイヤーの状態を初期化してカードを2枚ずつ配る.
       // Note: ディーラーとプレイヤーは同じ抽象クラスを継承しているため、同じメソッドが
@@ -226,42 +266,27 @@ class Game {
       // 全員がスタンド（カードを引くのをやめた）状態になるまで繰り返しカードを引かせる.
       do {
         foreach ($this->players as $player) {
-          if (!$player->isStanding()) {
-            if ($player->hits()) {
-              $card = $this->deck->pullCard();
-              $player->addCard($card);
-              // バストした場合は強制的に終了.
-              if (21 < Game::calculateSum($player->getCards())) {
-                $player->setStanding();
-              }
-            }
-            else {
-              $player->setStanding();
-            }
-          }
+          $this->dealCard($player);
         }
       } while (!$this->isEveryPlayerStanding());
-
       // ディーラーのターン.
-      \cli\line("\n" . $this->dealer->getName() . "のターンです");
-      while ($this->dealer->hits()) {
-        $this->printAllHands();
-        $card = $this->deck->pullCard();
-        $this->dealer->addCard($card);
-      }
+      do {
+        $this->dealCard($this->dealer);
+      } while (!$this->dealer->isStanding());
 
       // 勝敗の表示.
-      \cli\line("\n-- RESULT --");
+      cli\line("\n-- RESULT --");
       $message = $this->dealer->getName() . ': ' .Game::formatPlayerHand($this->dealer->getCards());
-      \cli\line($message);
+      cli\line($message);
       foreach ($this->players as $player) {
         $status = $this->isPlayerWin($player);
-        \cli\line($player->getName() . ' ... ' . $status);
+        cli\line($player->getName() . ' ... ' . $status);
       }
 
       unset($continue);
-      $continue = \cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
+      $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
 
+      cli\line('Round ' . $round . ' 終了');
       $round++;
     } while($continue);
   }
