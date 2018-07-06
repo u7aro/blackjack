@@ -19,13 +19,15 @@ class Game {
    */
   private $players = [];
 
+  private $num_decks;
+
   /**
    * ゲームで使用する Deck クラスのインスタンスオブジェクト.
    */
   protected $deck;
 
   public function __construct($num_decks) {
-    $this->deck = new Deck($num_decks);
+    $this->num_decks = $num_decks;
   }
 
   /**
@@ -112,16 +114,6 @@ class Game {
    */
   public function addDealer(Dealer $dealer) {
     $this->dealer = $dealer;
-  }
-
-  /**
-   * 生成するデッキの数を設定.
-   *
-   * @param int $num_decks
-   *   生成するデッキの数.
-   */
-  public function setNumDecks($num_decks) {
-    $this->num_decks = $num_decks;
   }
 
   /**
@@ -244,9 +236,17 @@ class Game {
    */
   public function start() {
     $this->printLogo();
+    $this->deck = new Deck($this->num_decks);
 
     $round = 1;
     do {
+      $limit = count($this->players) * 5;
+      if (count($this->deck->getCards()) < $limit) {
+        cli\line('デッキをリセットします');
+        $this->deck = new Deck($this->num_decks);
+        // TODO: プレイヤークラスにデッキをリセットしたことを伝える.
+      }
+
       cli\line('Round ' . $round . ' スタート');
 
       // ディーラーとプレイヤーの状態を初期化してカードを2枚ずつ配る.
