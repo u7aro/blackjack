@@ -167,7 +167,7 @@ class Game {
   }
 
   public function printAllHands($is_players_turn = FALSE) {
-    \cli\line();
+    \cli\line('==');
     $message = $this->dealer->getName() . ': '
       . game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
     if (!$is_players_turn) {
@@ -180,6 +180,7 @@ class Game {
         . game::formatPlayerHand($player->getCards())
         . ' (' . game::formatCardsPoint($player->getCards()) . ')');
     }
+    \cli\line('==');
   }
 
   public function isPlayerWin(Player $player) {
@@ -204,7 +205,10 @@ class Game {
   public function start() {
     $this->printLogo();
 
+    $round = 1;
     do {
+      \cli\line('Round ' . $round . 'スタート');
+
       // ディーラーとプレイヤーの状態を初期化してカードを2枚ずつ配る.
       // Note: ディーラーとプレイヤーは同じ抽象クラスを継承しているため、同じメソッドが
       // 利用できる.
@@ -217,10 +221,11 @@ class Game {
         }
       }
 
+      $this->printAllHands($is_players_turn = TRUE);
+
       // 全員がスタンド（カードを引くのをやめた）状態になるまで繰り返しカードを引かせる.
       do {
         foreach ($this->players as $player) {
-          $this->printAllHands($is_players_turn = TRUE);
           if (!$player->isStanding()) {
             if ($player->hits()) {
               $card = $this->deck->pullCard();
@@ -256,6 +261,8 @@ class Game {
 
       unset($continue);
       $continue = \cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
+
+      $round++;
     } while($continue);
   }
 

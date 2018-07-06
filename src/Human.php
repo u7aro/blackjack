@@ -24,7 +24,6 @@ class Human extends Player {
    * {@inheritdoc}
    */
   public function hits() {
-    \cli\line('--');
     $default_choice = (Game::calculateSum($this->getCards()) < 17) ? 'y' : 'n';
     $question = $this->getName() . ': カードを引きますか';
     return \cli\choose($question, 'yn', $default_choice) == 'y';
