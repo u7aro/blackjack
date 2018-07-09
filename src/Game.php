@@ -10,6 +10,11 @@ use cli;
 class Game {
 
   /**
+   * メッセージを表示する際の待ち時間. 単位はミリセコンド.
+   */
+  const MESSAGE_WAIT_TIME = 500000;
+
+  /**
    * ディーラークラスのインスタンスオブジェクト.
    */
   private $dealer;
@@ -162,7 +167,6 @@ class Game {
   }
 
   public function printAllHands($is_players_turn = FALSE) {
-    cli\line('==');
     $message = $this->dealer->getName() . ': '
       . Game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
     if (!$is_players_turn) {
@@ -175,7 +179,6 @@ class Game {
         . Game::formatPlayerHand($player->getCards())
         . ' (' . Game::formatCardsPoint($player->getCards()) . ')');
     }
-    cli\line('==');
   }
 
   public function isPlayerWin(Player $player) {
@@ -206,7 +209,7 @@ class Game {
         $card = $this->deck->pullCard();
         $player->addCard($card);
 
-        sleep(1);
+        usleep(Game::MESSAGE_WAIT_TIME);
         cli\out($player->getName() . ': ' . Game::getHandScoreText($player->getCards()));
 
         $sum = Game::calculateSum($player->getCards());
@@ -221,12 +224,12 @@ class Game {
           $player->setStanding();
         }
         cli\line();
-        sleep(1);
+        usleep(Game::MESSAGE_WAIT_TIME);
       }
       else {
         $player->setStanding();
         cli\line($player->getName() . ': %cStand%n');
-        sleep(1);
+        usleep(Game::MESSAGE_WAIT_TIME);
       }
     }
   }
@@ -287,6 +290,7 @@ class Game {
       $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
 
       cli\line('Round ' . $round . ' 終了');
+      cli\line('==');
       $round++;
     } while($continue);
   }
