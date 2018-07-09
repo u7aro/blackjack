@@ -140,7 +140,7 @@ class Game {
     return TRUE;
   }
 
-  public static function formatPlayerHand(array $cards, $first_card_hides = FALSE) {
+  public static function formatHand(array $cards, $first_card_hides = FALSE) {
     $string = '';
     foreach ($cards as $card) {
       if ($first_card_hides && empty($string)) {
@@ -154,21 +154,9 @@ class Game {
     return $string;
   }
 
-  public static function formatCardsPoint(array $cards) {
-    $min_sum = Game::calculateMinSum($cards);
-    $max_sum = Game::calculateSum($cards);
-    if ($min_sum == $max_sum) {
-      $point = $max_sum;
-    }
-    else {
-      $point = $min_sum . '/' . $max_sum;
-    }
-    return $point;
-  }
-
   public function printAllHands($is_players_turn = FALSE) {
     $message = $this->dealer->getName() . ': '
-      . Game::formatPlayerHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
+      . Game::formatHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
     if (!$is_players_turn) {
       $message .= ' (' . Game::formatCardsPoint($this->dealer->getCards()) . ')';
     }
@@ -176,8 +164,8 @@ class Game {
 
     foreach ($this->players as $player) {
       cli\line($player->getName() . ': '
-        . Game::formatPlayerHand($player->getCards())
-        . ' (' . Game::formatCardsPoint($player->getCards()) . ')');
+        . Game::formatHand($player->getCards())
+        . Game::formatHandScore($player->getCards()));
     }
   }
 
@@ -197,9 +185,21 @@ class Game {
     return 'draw';
   }
 
-  public function getHandScoreText($cards) {
-    return Game::formatPlayerHand($cards)
-      . ' (' . Game::formatCardsPoint($cards) . ')';
+  public function formatHandScore($cards) {
+    $min_sum = Game::calculateMinSum($cards);
+    $max_sum = Game::calculateSum($cards);
+    $points = ($min_sum == $max_sum) ? $max_sum : $min_sum . '/' . $max_sum;
+    $output = "(%m$points%n)";
+
+    $sum = Game::calculateSum($cards);
+    if ($sum == 21) {
+      $output .= ' %y%FBlackjack%n';
+    }
+    elseif (21 < $sum) {
+      $output .= ' %rBust!%n';
+    }
+
+    return $output;
   }
 
   public function dealCard(Player $player) {
@@ -210,17 +210,14 @@ class Game {
         $player->addCard($card);
 
         usleep(Game::MESSAGE_WAIT_TIME);
-        cli\out($player->getName() . ': ' . Game::getHandScoreText($player->getCards()));
+
+        cli\out($player->getName() . ': '
+          . Game::formatHand($player->getCards())
+          . Game::formatHandScore($player->getCards()));
 
         $sum = Game::calculateSum($player->getCards());
         // ブラックジャック(21)とバストした場合は強制的に終了.
         if (21 <= $sum) {
-          if ($sum == 21) {
-            cli\out(' ... %y%FBlackjack%n');
-          }
-          else {
-            cli\out(' ... %rBust!%n');
-          }
           $player->setStanding();
         }
         cli\line();
@@ -279,18 +276,14 @@ class Game {
 
       // 勝敗の表示.
       cli\line("\n-- RESULT --");
-      $message = $this->dealer->getName() . ': ' .Game::formatPlayerHand($this->dealer->getCards());
+      $message = $this->dealer->getName() . ': ' .Game::formatHand($this->dealer->getCards());
       cli\line($message);
       foreach ($this->players as $player) {
         $status = $this->isPlayerWin($player);
         cli\line($player->getName() . ' ... ' . $status);
       }
-
-      unset($continue);
-      $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
-
       cli\line('Round ' . $round . ' 終了');
-      cli\line('==');
+      $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
       $round++;
     } while($continue);
   }
