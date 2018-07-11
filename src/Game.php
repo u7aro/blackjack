@@ -240,11 +240,14 @@ class Game {
 
     $round = 1;
     do {
+      // TODO:
+      // デッキのシャッフルを239行目と同じロジックにする.
       $limit = count($this->players) * 5;
       if (count($this->deck->getCards()) < $limit) {
         cli\line('デッキをリセットします');
         $this->deck = new Deck($this->num_decks);
-        // TODO: プレイヤークラスにデッキをリセットしたことを伝える.
+        // TODO:
+        // 参加プレイヤーにデッキをリセットしたことを伝える(AI用).
       }
 
       cli\line('Round ' . $round . ' スタート');
@@ -258,6 +261,8 @@ class Game {
         for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
           $card = $this->deck->pullCard();
           $participant->addCard($card);
+          // TODO:
+          // カードを受け取っていない他のプレイヤーにも情報を伝える(AI用).
         }
       }
 
