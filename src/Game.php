@@ -10,27 +10,41 @@ use cli;
 class Game {
 
   /**
-   * メッセージを表示する際の待ち時間. 単位はミリセコンド.
+   * メッセージを表示する際の待ち時間. 単位はミリセコンド(100万分の1秒).
    */
   const MESSAGE_WAIT_TIME = 500000;
 
   /**
    * ディーラークラスのインスタンスオブジェクト.
+   *
+   * @var object
    */
   private $dealer;
 
   /**
    * 参加するプレイヤークラスを継承したインスタンスオブジェクトの配列.
+   *
+   * @var array
    */
   private $players = [];
 
+  /**
+   * 使用するデッキの数.
+   *
+   * @var int
+   */
   private $num_decks;
 
   /**
    * ゲームで使用する Deck クラスのインスタンスオブジェクト.
+   *
+   * @var object
    */
   protected $deck;
 
+  /**
+   * Game オブジェクトの組み立て.
+   */
   public function __construct($num_decks) {
     $this->num_decks = $num_decks;
   }
@@ -202,6 +216,9 @@ class Game {
     return $output;
   }
 
+  /**
+   * Player オブジェクトにカードを引くか判断させる.
+   */
   public function dealCard(Player $player) {
     if (!$player->isStanding()) {
       if ($player->hits()) {
@@ -281,7 +298,7 @@ class Game {
 
       // 勝敗の表示.
       cli\line("\n-- RESULT --");
-      $message = $this->dealer->getName() . ': ' .Game::formatHand($this->dealer->getCards());
+      $message = $this->dealer->getName() . ': ' . Game::formatHand($this->dealer->getCards());
       cli\line($message);
       foreach ($this->players as $player) {
         $status = $this->isPlayerWin($player);

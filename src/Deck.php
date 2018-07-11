@@ -6,6 +6,12 @@ namespace Blackjack;
  * カードのデッキを制御するためのクラス.
  */
 class Deck {
+
+  /**
+   * デッキが保持するカード.
+   *
+   * @var array
+   */
   private $cards = [];
 
   /**
@@ -45,4 +51,5 @@ class Deck {
   public function getCards() {
     return $this->cards;
   }
+
 }

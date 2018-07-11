@@ -4,6 +4,7 @@
 
 - PHP 5.6 以上のみで動作します。
 - ライブラリの管理に [Composer](https://getcomposer.org/) を利用しています。
+- CLIの出力制御に [PHP CLI Tools](https://github.com/wp-cli/php-cli-tools) を利用しています。
 
 ## インストール方法
 

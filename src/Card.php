@@ -7,7 +7,19 @@ namespace Blackjack;
  */
 class Card {
 
-  private $suit, $number;
+  /**
+   * カードの絵柄.
+   *
+   * @var string
+   */
+  private $suit;
+
+  /**
+   * string カードの番号.
+   *
+   * @var int
+   */
+  private $number;
 
   /**
    * Card オブジェクトを構築します.

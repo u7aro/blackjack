@@ -7,14 +7,45 @@ namespace Blackjack;
  */
 abstract class Player implements GameCommunication {
 
+  /**
+   * プレイヤーがスタンドしたか判断するフラグ.
+   *
+   * @var bool
+   */
   private $isStanding = FALSE;
+
+  /**
+   * プレイヤーの手札.
+   *
+   * 配列の要素は Card クラスのインスタンス.
+   *
+   * @var array
+   */
   private $cards = [];
+
+  /**
+   * プレイヤーの名前.
+   *
+   * @var string
+   */
   protected $name = '';
 
+  /**
+   * Player オブジェクトの組み立て.
+   *
+   * @param string $name
+   *   プレイヤーの名前.
+   */
   public function __construct($name = 'Player') {
     $this->name = $name;
   }
 
+  /**
+   * プレイヤーの名前を返す.
+   *
+   * @param string
+   *   プレイヤー名の文字列.
+   */
   public function getName() {
     return $this->name;
   }

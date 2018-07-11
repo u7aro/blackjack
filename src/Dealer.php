@@ -2,8 +2,6 @@
 
 namespace Blackjack;
 
-use cli;
-
 /**
  * ディーラーのプレイヤークラス.
  */
