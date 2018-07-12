@@ -217,9 +217,9 @@ class Game {
   }
 
   /**
-   * Player オブジェクトにカードを引くか判断させる.
+   * Player オブジェクトにカードを引かせる.
    */
-  public function dealCard(Player $player) {
+  public function askCardsDeal(Player $player) {
     if (!$player->isStanding()) {
       if ($player->hits()) {
         cli\line($player->getName() . ': %gHit%n');
@@ -249,62 +249,87 @@ class Game {
   }
 
   /**
-   * ゲームを開始する.
+   * デッキの状態を確認し、必要に応じてデッキを新しく準備する.
+   */
+  public function prepareDeck() {
+    // 残りのカード枚数が `参加プレイヤー x 5枚以下` になったらデッキをリセット.
+    $num_cards_deck_reset_limit = count($this->players) * 5;
+    if (!isset($this->deck) || count($this->deck->getCards()) < $num_cards_deck_reset_limit) {
+      $this->deck = new Deck($this->num_decks);
+      cli\line('デッキを新しく生成しました');
+      // TODO:
+      // 参加プレイヤーにデッキをリセットしたことを伝える(AI用).
+    }
+  }
+
+  /**
+   * 最初のカードを各プレイヤーに2枚ずつ配る.
+   */
+  public function dealInitCards() {
+    // ディーラーとプレイヤーの状態を初期化してカードを2枚ずつ配る.
+    // Note: ディーラーとプレイヤーは同じ抽象クラスを継承しているため、同じメソッドが
+    // 利用できる.
+    $participants = array_merge([$this->dealer], $this->players);
+    foreach ($participants as $participant) {
+      $participant->init();
+      for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
+        $card = $this->deck->pullCard();
+        $participant->addCard($card);
+        // TODO:
+        // カードを受け取っていない他のプレイヤーにも情報を伝える(AI用).
+      }
+    }
+  }
+
+  /**
+   * 勝敗を表示する.
+   */
+  public function showRoundResults() {
+    cli\line("\n-- RESULT --");
+    $message = $this->dealer->getName() . ': ' . Game::formatHand($this->dealer->getCards());
+    cli\line($message);
+    foreach ($this->players as $player) {
+      $status = $this->isPlayerWin($player);
+      cli\line($player->getName() . ' ... ' . $status);
+    }
+  }
+
+  /**
+   * 全員がスタンド（カードを引くのをやめた）状態になるまで繰り返しカードを引かせる.
+   */
+  public function doPlayersTurn() {
+    do {
+      foreach ($this->players as $player) {
+        $this->askCardsDeal($player);
+      }
+    } while (!$this->isEveryPlayerStanding());
+  }
+
+  /**
+   *  ディーラーのターン.
+   */
+  public function doDealerTurn() {
+    do {
+      $this->askCardsDeal($this->dealer);
+    } while (!$this->dealer->isStanding());
+  }
+
+  /**
+   * ゲームを開始して、ゲーム全体の流れを組み立てる.
    */
   public function start() {
     $this->printLogo();
-
-    $round = 1;
     do {
-      // 残りのカード枚数が `参加プレイヤー x 5枚以下` になったらデッキをリセット.
-      $num_cards_deck_reset_limit = count($this->players) * 5;
-      if (!isset($this->deck) || count($this->deck->getCards()) < $num_cards_deck_reset_limit) {
-        $this->deck = new Deck($this->num_decks);
-        cli\line('デッキを新しく生成しました');
-        // TODO:
-        // 参加プレイヤーにデッキをリセットしたことを伝える(AI用).
-      }
-
+      $round = isset($round) ? ($round + 1) : 1;
       cli\line('Round ' . $round . ' スタート');
-
-      // ディーラーとプレイヤーの状態を初期化してカードを2枚ずつ配る.
-      // Note: ディーラーとプレイヤーは同じ抽象クラスを継承しているため、同じメソッドが
-      // 利用できる.
-      $participants = array_merge([$this->dealer], $this->players);
-      foreach ($participants as $participant) {
-        $participant->init();
-        for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
-          $card = $this->deck->pullCard();
-          $participant->addCard($card);
-          // TODO:
-          // カードを受け取っていない他のプレイヤーにも情報を伝える(AI用).
-        }
-      }
-
+      $this->prepareDeck();
+      $this->dealInitCards();
       $this->printAllHands($is_players_turn = TRUE);
-
-      // 全員がスタンド（カードを引くのをやめた）状態になるまで繰り返しカードを引かせる.
-      do {
-        foreach ($this->players as $player) {
-          $this->dealCard($player);
-        }
-      } while (!$this->isEveryPlayerStanding());
-      // ディーラーのターン.
-      do {
-        $this->dealCard($this->dealer);
-      } while (!$this->dealer->isStanding());
-
-      // 勝敗の表示.
-      cli\line("\n-- RESULT --");
-      $message = $this->dealer->getName() . ': ' . Game::formatHand($this->dealer->getCards());
-      cli\line($message);
-      foreach ($this->players as $player) {
-        $status = $this->isPlayerWin($player);
-        cli\line($player->getName() . ' ... ' . $status);
-      }
+      $this->doPlayersTurn();
+      $this->doDealerTurn();
+      $this->showRoundResults();
       cli\line('Round ' . $round . ' 終了');
       $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
-      $round++;
     } while($continue);
   }
 
