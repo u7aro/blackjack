@@ -217,9 +217,9 @@ class Game {
   }
 
   /**
-   * Player オブジェクトにカードを引かせる.
+   * Player にカードを引くか判断させる.
    */
-  public function askCardsDeal(Player $player) {
+  public function askDeal(Player $player) {
     if (!$player->isStanding()) {
       if ($player->hits()) {
         cli\line($player->getName() . ': %gHit%n');
@@ -300,7 +300,7 @@ class Game {
   public function doPlayersTurn() {
     do {
       foreach ($this->players as $player) {
-        $this->askCardsDeal($player);
+        $this->askDeal($player);
       }
     } while (!$this->isEveryPlayerStanding());
   }
@@ -310,7 +310,7 @@ class Game {
    */
   public function doDealerTurn() {
     do {
-      $this->askCardsDeal($this->dealer);
+      $this->askDeal($this->dealer);
     } while (!$this->dealer->isStanding());
   }
 
