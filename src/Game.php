@@ -253,16 +253,14 @@ class Game {
    */
   public function start() {
     $this->printLogo();
-    $this->deck = new Deck($this->num_decks);
 
     $round = 1;
     do {
-      // TODO:
-      // デッキのシャッフルを239行目と同じロジックにする.
-      $limit = count($this->players) * 5;
-      if (count($this->deck->getCards()) < $limit) {
-        cli\line('デッキをリセットします');
+      // 残りのカード枚数が `参加プレイヤー x 5枚以下` になったらデッキをリセット.
+      $num_cards_deck_reset_limit = count($this->players) * 5;
+      if (!isset($this->deck) || count($this->deck->getCards()) < $num_cards_deck_reset_limit) {
         $this->deck = new Deck($this->num_decks);
+        cli\line('デッキを新しく生成しました');
         // TODO:
         // 参加プレイヤーにデッキをリセットしたことを伝える(AI用).
       }
