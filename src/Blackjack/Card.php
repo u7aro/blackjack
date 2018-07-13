@@ -65,4 +65,13 @@ class Card {
   public function getString() {
     return sprintf('%s%02s', $this->suit, $this->number);
   }
+
+  public function getSuit() {
+    return $this->suit;
+  }
+
+  public function getNumber() {
+    return $this->number;
+  }
+
 }
