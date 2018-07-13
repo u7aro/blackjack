@@ -10,21 +10,17 @@ class GameTest extends PHPUnit\Framework\TestCase {
 
   static function forTestCalculateSum() {
     return [
-      '2, 3 の組み合わせで 5 として計算されるか' => [
-        5,
-        [new Card('S', 2), new Card('H', 3)],
+      '2, 3 の組み合わせは 5 として計算' => [
+        5, [new Card('S', 2), new Card('H', 3)],
       ],
-      '1, 10 の組み合わせで 21 として計算される' => [
-        21,
-        [new Card('S', 1), new Card('H', 10)],
+      '1, 10 の組み合わせは 21 として計算' => [
+        21, [new Card('S', 1), new Card('H', 10)],
       ],
-      '1, 10, 10 の組み合わせで 21 として計算される' => [
-        21,
-        [new Card('S', 1), new Card('H', 10), new Card('D', 10)],
+      '1, 10, 10 の組み合わせは 21 として計算' => [
+        21, [new Card('S', 1), new Card('H', 10), new Card('D', 10)],
       ],
-      '1, 1, 1, 1 の組み合わせで 14 として計算される' => [
-        14,
-        [new Card('S', 1), new Card('H', 1), new Card('D', 1), new Card('C', 1)],
+      '1, 1, 1, 1 の組み合わせは 14 として計算' => [
+        14, [new Card('S', 1), new Card('H', 1), new Card('D', 1), new Card('C', 1)],
       ],
     ];
   }
