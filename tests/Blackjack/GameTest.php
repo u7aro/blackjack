@@ -37,7 +37,7 @@ class GameTest extends \PHPUnit\Framework\TestCase {
 
   static function forTestCalculateMinSum() {
     return [
-      '2, 11 の組み合わせは 5 として計算' => [
+      '2, 11 の組み合わせは 12 として計算' => [
         12, [new Card('S', 2), new Card('H', 11)],
       ],
       '1, 11 の組み合わせは 11 として計算' => [
