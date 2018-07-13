@@ -322,9 +322,11 @@ class Game {
     do {
       $round = isset($round) ? ($round + 1) : 1;
       cli\line('Round ' . $round . ' スタート');
+      usleep(Game::MESSAGE_WAIT_TIME);
       $this->prepareDeck();
       $this->dealInitCards();
       $this->printAllHands($is_players_turn = TRUE);
+      usleep(Game::MESSAGE_WAIT_TIME);
       $this->doPlayersTurn();
       $this->doDealerTurn();
       $this->showRoundResults();
