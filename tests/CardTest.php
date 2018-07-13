@@ -1,5 +1,7 @@
 <?php
 
+use Blackjack\Card;
+
 /**
  * カードクラスのテストを行うクラス.
  */
@@ -21,7 +23,7 @@ class CardTest extends PHPUnit\Framework\TestCase {
    */
   public function testGetPoint($excepted, $number) {
     // 絵柄は何でも良いので D に固定.
-    $card = new Blackjack\Card('D', $number);
+    $card = new Card('D', $number);
     $this->assertEquals($excepted, $card->getPoint());
   }
 

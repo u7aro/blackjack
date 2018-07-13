@@ -1,5 +1,8 @@
 <?php
 
+use Blackjack\Card;
+use Blackjack\Dealer;
+
 /**
  * Dealer クラスのテストを行うクラス.
  */
@@ -9,19 +12,19 @@ class DealerTest extends PHPUnit\Framework\TestCase {
     return [
       '合計が 12 の時は TRUE' => [
         TRUE,
-        [new Blackjack\Card('D', 10), new Blackjack\Card('D', 2)],
+        [new Card('D', 10), new Card('D', 2)],
       ],
       '合計が 16 の時は TRUE' => [
         TRUE,
-        [new Blackjack\Card('D', 10), new Blackjack\Card('D', 6)],
+        [new Card('D', 10), new Card('D', 6)],
       ],
       '合計が 17 の時は FALSE' => [
         FALSE,
-        [new Blackjack\Card('D', 10), new Blackjack\Card('D', 7)],
+        [new Card('D', 10), new Card('D', 7)],
       ],
       '合計が 21 の時は FALSE' => [
         FALSE,
-        [new Blackjack\Card('D', 10), new Blackjack\Card('D', 1)],
+        [new Card('D', 10), new Card('D', 1)],
       ],
     ];
   }
@@ -31,7 +34,7 @@ class DealerTest extends PHPUnit\Framework\TestCase {
    * @dataProvider forTestHits
    */
   public function testHits($excepted, $cards) {
-    $dealer = new Blackjack\Dealer();
+    $dealer = new Dealer();
     foreach ($cards as $card) {
       $dealer->addCard($card);
     }
