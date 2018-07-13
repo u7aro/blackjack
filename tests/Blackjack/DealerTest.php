@@ -1,12 +1,14 @@
 <?php
 
+namespace Blackjack\Tests;
+
 use Blackjack\Card;
 use Blackjack\Dealer;
 
 /**
  * Dealer クラスのテストを行うクラス.
  */
-class DealerTest extends PHPUnit\Framework\TestCase {
+class DealerTest extends \PHPUnit\Framework\TestCase {
 
   static function forTestHits() {
     return [

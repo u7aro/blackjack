@@ -1,11 +1,13 @@
 <?php
 
+namespace Blackjack\Tests;
+
 use Blackjack\Card;
 
 /**
  * カードクラスのテストを行うクラス.
  */
-class CardTest extends PHPUnit\Framework\TestCase {
+class CardTest extends \PHPUnit\Framework\TestCase {
 
   static function forTestGetPoint() {
     return [

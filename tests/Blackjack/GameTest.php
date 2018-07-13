@@ -1,12 +1,14 @@
 <?php
 
+namespace Blackjack\Tests;
+
 use Blackjack\Game;
 use Blackjack\Card;
 
 /**
  * ゲームクラスのテストを行うクラス.
  */
-class GameTest extends PHPUnit\Framework\TestCase {
+class GameTest extends \PHPUnit\Framework\TestCase {
 
   static function forTestCalculateSum() {
     return [
