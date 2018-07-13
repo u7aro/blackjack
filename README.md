@@ -1,10 +1,11 @@
 # Blackjack
 
+コマンドライン上でブラックジャックが遊べるプログラムです。
+
 ## 必須条件
 
 - PHP 5.6 以上のみで動作します。
-- ライブラリの管理に [Composer](https://getcomposer.org/) を利用しています。
-- CLIの出力制御に [PHP CLI Tools](https://github.com/wp-cli/php-cli-tools) を利用しています。
+- ライブラリの管理に [Composer](https://getcomposer.org/) を利用しているため、プログラムの実行前にインストール作業が必要です。
 
 ## インストール方法
 
@@ -20,4 +21,12 @@ composer install
 
 ```shell
 php blackjack.php
+```
+
+## 自動テスト
+
+本プログラムは [PHPUnit](https://phpunit.de/) 用の自動テストのコードが含まれています。次のコマンドで自動テストを実行することができます。
+
+```shell
+./vendor/bin/phpunit
 ```
