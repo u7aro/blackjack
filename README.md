@@ -59,6 +59,12 @@ php blackjack.php --help
 
 ブラウザで `output/index.html` のファイルを開くことでドキュメントを閲覧することができます。
 
+クラス相関図も生成したい場合は Graphviz が必要となります。OS X で Homebrew が入っている場合は次のコマンドでインストールすることが可能です。
+
+```shell
+brew install Graphviz
+```
+
 ## 実装の解説
 
 - PHP のインタフェースを使って Game クラスと Player クラスに必要なメソッドを定義しました。`GameCommunication.php` ファイルが設計書の代わりとなり、開発者が AI などを作る際にどんなメソッドが必要なのかを知ることができます。
