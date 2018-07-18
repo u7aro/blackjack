@@ -11,8 +11,8 @@ class Dealer extends Player {
    * {@inheritdoc}
    */
   public function needsOneMoreCard() {
-    $sum = Game::getPoints($this->getCards());
-    if ($sum < 17) {
+    $points = Game::getPoints($this->getCards());
+    if ($points < 17) {
       return TRUE;
     }
     else {

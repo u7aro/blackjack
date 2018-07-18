@@ -201,15 +201,14 @@ class Game {
 
   public function formatHandScore($cards) {
     $min_points = Game::getMinPoints($cards);
-    $max_points = Game::getPoints($cards);
-    $points = ($min_points == $max_points) ? $max_points : $min_points . '/' . $max_points;
-    $output = "(%m$points%n)";
+    $points = Game::getPoints($cards);
+    $output_points = ($min_points == $points) ? $points : $min_points . '/' . $points;
+    $output = "(%m$output_points%n)";
 
-    $sum = Game::getPoints($cards);
-    if ($sum == 21) {
+    if ($points == 21) {
       $output .= ' %y%FBlackjack%n';
     }
-    elseif (21 < $sum) {
+    elseif (21 < $points) {
       $output .= ' %rBust!%n';
     }
 
@@ -225,14 +224,13 @@ class Game {
       $player->takeCard($this->deck->pullCard());
 
       usleep(Game::MESSAGE_WAIT_TIME);
-
       cli\out($player->getName() . ': '
         . Game::formatHand($player->getCards())
         . Game::formatHandScore($player->getCards()));
 
-      $sum = Game::getPoints($player->getCards());
+      $points = Game::getPoints($player->getCards());
       // ブラックジャック(21)とバストした場合は強制的に終了.
-      if (21 <= $sum) {
+      if (21 <= $points) {
         $player->setStanding();
       }
       cli\line();
