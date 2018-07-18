@@ -11,8 +11,16 @@
 
 Composer を使って必要なライブラリをインストールしてください。
 
+PHPUnit などの開発用のライブラリを入れる場合:
+
 ```shell
 composer install
+```
+
+開発用のライブラリを入れない場合
+
+```shell
+composer install --no-dev
 ```
 
 ## 遊び方
