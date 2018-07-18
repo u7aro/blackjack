@@ -333,6 +333,8 @@ class Game {
       cli\line('Round ' . $round . ' 終了');
       $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
     } while($continue);
+    usleep(Game::MESSAGE_WAIT_TIME);
+    cli\line('また遊んでね★ミ');
   }
 
 }
