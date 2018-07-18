@@ -73,6 +73,20 @@ class Game {
   }
 
   /**
+   * ロゴを出力する.
+   */
+  public function printEndingMessage() {
+    cli\line();
+    cli\out("%y");
+    cli\line('   ∧＿∧　　 ／￣￣￣￣￣');
+    cli\line('（　´∀｀）＜　また遊んでね！');
+    cli\line('（　　　　）＼＿＿＿＿＿');
+    cli\line(' ｜ ｜　|');
+    cli\line('（_＿）＿）');
+    cli\line("%n");
+  }
+
+  /**
    * 渡された手札から合計値を計算して返す. エースを含む場合は21に近い役で数値を返す.
    *
    * @param array $cards
@@ -337,7 +351,7 @@ class Game {
       $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
     } while($continue);
     $this->wait();
-    cli\line('また遊んでね★ミ');
+    $this->printEndingMessage();
   }
 
   /**
