@@ -1,7 +1,7 @@
 <phpunit bootstrap="vendor/autoload.php">
   <testsuites>
     <testsuite name="blackjack">
-      <directory>tests</directory>
+      <directory>src/tests</directory>
     </testsuite>
   </testsuites>
 </phpunit>
