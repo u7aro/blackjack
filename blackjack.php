@@ -12,7 +12,7 @@ require 'vendor/autoload.php';
 // コンソールオプションの設定.
 $strict = in_array('--strict', $_SERVER['argv']);
 $arguments = new \cli\Arguments(compact('strict'));
-$arguments->addFlag(['help', 'h'], 'Show this help screen');
+$arguments->addFlag(['help', 'h'], 'このヘルプを表示します');
 $arguments->addOption(['name', 'n'], [
   'default' => 'You',
   'description' => 'あなたの名前を設定します',
@@ -27,7 +27,7 @@ $arguments->addOption(['num-ai', 'a'], [
 ]);
 $arguments->addOption(['pack', 'p'], [
   'default'     => 1,
-  'description' => '使用するカードのパック数を設定します',
+  'description' => 'デッキに使用するカードのパック数を設定します',
 ]);
 $arguments->parse();
 
