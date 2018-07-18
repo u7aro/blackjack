@@ -51,7 +51,7 @@ abstract class Player implements GameCommunication {
   }
 
   /**
-   * カードを追加.
+   * カードを受け取る.
    *
    * @param object $card
    *   Card クラスのインスタンスオブジェクト.
@@ -90,7 +90,7 @@ abstract class Player implements GameCommunication {
   /**
    * プレイヤーの状態を初期化する.
    */
-  final public function init() {
+  final public function initRound() {
     $this->cards = [];
     $this->isStanding = FALSE;
   }

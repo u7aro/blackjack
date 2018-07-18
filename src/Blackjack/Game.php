@@ -270,7 +270,7 @@ class Game {
     // 利用できる.
     $participants = array_merge([$this->dealer], $this->players);
     foreach ($participants as $participant) {
-      $participant->init();
+      $participant->initRound();
       for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
         $card = $this->deck->pullCard();
         $participant->takeCard($card);
