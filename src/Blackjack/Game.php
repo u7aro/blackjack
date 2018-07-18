@@ -77,13 +77,12 @@ class Game {
    */
   public function printEndingMessage() {
     cli\line();
-    cli\out("%y");
     cli\line('   ∧＿∧　　 ／￣￣￣￣￣');
-    cli\line('（　´∀｀）＜　また遊んでね！');
+    cli\line('（　´∀｀）＜　%yまた遊んでね！%n');
     cli\line('（　　　　）＼＿＿＿＿＿');
     cli\line(' ｜ ｜　|');
     cli\line('（_＿）＿）');
-    cli\line("%n");
+    cli\line('');
   }
 
   /**
