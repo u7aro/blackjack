@@ -54,6 +54,7 @@ php blackjack.php
 ## 実装の解説
 
 - PHP のインタフェースを使って Game クラスと Player クラスに必要なメソッドを定義しました。`GameCommunication.php` ファイルが設計書の代わりとなり、開発者が AI などを作る際にどんなメソッドが必要なのかを知ることができます。
+- Player クラスは継承専用の抽象クラス (abstract) としています。
 - Composer のオートローダーを使って、必要なライブラリを読み込んでいます。
   - 依存関係や require などを意識することなくファイルを分離することができています。
 - WordPress CLI に付随する [PHP Command Line Tools](https://github.com/wp-cli/php-cli-tools) と言うライブラリを利用し、標準出力・入力に関する所謂車輪の再開発を阻止しました。
