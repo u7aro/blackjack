@@ -10,8 +10,8 @@ class Dealer extends Player {
   /**
    * {@inheritdoc}
    */
-  public function hits() {
-    $sum = Game::calculateSum($this->getCards());
+  public function needsOneMoreCard() {
+    $sum = Game::getPoints($this->getCards());
     if ($sum < 17) {
       return TRUE;
     }

@@ -5,7 +5,7 @@ namespace Blackjack\Tests;
 use Blackjack\Deck;
 
 /**
- * カードクラスのテストを行うクラス.
+ * Deck クラスのテストを行うクラス.
  */
 class DeckTest extends \PHPUnit\Framework\TestCase {
 

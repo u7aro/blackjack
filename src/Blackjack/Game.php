@@ -75,7 +75,7 @@ class Game {
    * @return int
    *   手札の合計値.
    */
-  public static function calculateSum(array $cards) {
+  public static function getPoints(array $cards) {
     $num_aces = 0;
     $point_sum = 0;
     foreach ($cards as $card) {
@@ -107,7 +107,7 @@ class Game {
    * @return int
    *   手札の合計値.
    */
-  public static function calculateMinSum(array $cards) {
+  public static function getMinPoints(array $cards) {
     $point_sum = 0;
     foreach ($cards as $card) {
       $point_sum += $card->getPoint();
@@ -184,8 +184,8 @@ class Game {
   }
 
   public function isPlayerWin(Player $player) {
-    $dealer_sum = Game::calculateSum($this->dealer->getCards());
-    $player_sum = Game::calculateSum($player->getCards());
+    $dealer_sum = Game::getPoints($this->dealer->getCards());
+    $player_sum = Game::getPoints($player->getCards());
 
     // プレイヤーがバストした場合またはディーラーのポイントを下回る場合は負け.
     if (21 < $player_sum || ($dealer_sum <= 21 && $player_sum < $dealer_sum)) {
@@ -200,12 +200,12 @@ class Game {
   }
 
   public function formatHandScore($cards) {
-    $min_sum = Game::calculateMinSum($cards);
-    $max_sum = Game::calculateSum($cards);
-    $points = ($min_sum == $max_sum) ? $max_sum : $min_sum . '/' . $max_sum;
+    $min_points = Game::getMinPoints($cards);
+    $max_points = Game::getPoints($cards);
+    $points = ($min_points == $max_points) ? $max_points : $min_points . '/' . $max_points;
     $output = "(%m$points%n)";
 
-    $sum = Game::calculateSum($cards);
+    $sum = Game::getPoints($cards);
     if ($sum == 21) {
       $output .= ' %y%FBlackjack%n';
     }
@@ -217,14 +217,13 @@ class Game {
   }
 
   /**
-   * Player にカードを引くか判断させる.
+   * Player インスタンスにカードを引くか判断させる.
    */
   public function askDeal(Player $player) {
     if (!$player->isStanding()) {
-      if ($player->hits()) {
+      if ($player->needsOneMoreCard()) {
         cli\line($player->getName() . ': %gHit%n');
-        $card = $this->deck->pullCard();
-        $player->addCard($card);
+        $player->takeCard($this->deck->pullCard());
 
         usleep(Game::MESSAGE_WAIT_TIME);
 
@@ -232,7 +231,7 @@ class Game {
           . Game::formatHand($player->getCards())
           . Game::formatHandScore($player->getCards()));
 
-        $sum = Game::calculateSum($player->getCards());
+        $sum = Game::getPoints($player->getCards());
         // ブラックジャック(21)とバストした場合は強制的に終了.
         if (21 <= $sum) {
           $player->setStanding();
@@ -274,9 +273,9 @@ class Game {
       $participant->init();
       for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
         $card = $this->deck->pullCard();
-        $participant->addCard($card);
+        $participant->takeCard($card);
         // TODO:
-        // カードを受け取っていない他のプレイヤーにも情報を伝える(AI用).
+        // カードを受け取っていない他のプレイヤーにも場に出たカードの情報を伝える(AI用).
       }
     }
   }

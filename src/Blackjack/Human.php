@@ -12,9 +12,9 @@ class Human extends Player {
   /**
    * {@inheritdoc}
    */
-  public function hits() {
+  public function needsOneMoreCard() {
     $question = $this->getName() . 'はカードを引きますか';
-    $default_choice = (Game::calculateSum($this->getCards()) < 17) ? 'y' : 'n';
+    $default_choice = (Game::getPoints($this->getCards()) < 17) ? 'y' : 'n';
     return cli\choose($question, 'yn', $default_choice) == 'y';
   }
 

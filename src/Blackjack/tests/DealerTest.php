@@ -10,7 +10,10 @@ use Blackjack\Dealer;
  */
 class DealerTest extends \PHPUnit\Framework\TestCase {
 
-  static function forTestHits() {
+  /**
+   * testNeedsOneMoreCard() テストのデータプロバイダ.
+   */
+  static function forTestNeedsOneMoreCard() {
     return [
       '合計が 12 の時は TRUE' => [
         TRUE,
@@ -32,15 +35,15 @@ class DealerTest extends \PHPUnit\Framework\TestCase {
   }
 
   /**
-   * hits() メソッドのテスト.
-   * @dataProvider forTestHits
+   * needsOneMoreCard() メソッドのテスト.
+   * @dataProvider forTestNeedsOneMoreCard
    */
-  public function testHits($excepted, $cards) {
+  public function testNeedsOneMoreCard($excepted, $cards) {
     $dealer = new Dealer();
     foreach ($cards as $card) {
-      $dealer->addCard($card);
+      $dealer->takeCard($card);
     }
-    $this->assertEquals($excepted, $dealer->hits());
+    $this->assertEquals($excepted, $dealer->needsOneMoreCard());
   }
 
 }

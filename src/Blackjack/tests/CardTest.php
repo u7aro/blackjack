@@ -5,10 +5,13 @@ namespace Blackjack\Tests;
 use Blackjack\Card;
 
 /**
- * カードクラスのテストを行うクラス.
+ * Card クラスのテストを行うクラス.
  */
 class CardTest extends \PHPUnit\Framework\TestCase {
 
+  /**
+   * testGetPoint() のデータプロバイダ.
+   */
   static function forTestGetPoint() {
     return [
       '1 は 1 として数える' => [1, 1],

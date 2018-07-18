@@ -10,8 +10,8 @@ class AiPlayer extends Player {
   /**
    * {@inheritdoc}
    */
-  public function hits() {
-    $sum = Game::calculateSum($this->getCards());
+  public function needsOneMoreCard() {
+    $sum = Game::getPoints($this->getCards());
     return $sum < 17;
   }
 

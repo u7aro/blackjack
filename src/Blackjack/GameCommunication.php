@@ -13,7 +13,7 @@ interface GameCommunication {
    * @return bool
    *   追加のカードを望む場合は TRUE、望まない場合は FALSE.
    */
-  public function hits();
+  public function needsOneMoreCard();
 
   /**
    * ゲームで配られたカードを受け取る.
@@ -21,7 +21,7 @@ interface GameCommunication {
    * @param object $card
    *   Card クラスのインスタンスオブジェクト.
    */
-  public function addCard(Card $card);
+  public function takeCard(Card $card);
 
   /**
    * プレイヤーの名前を返す.

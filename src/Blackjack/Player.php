@@ -56,7 +56,7 @@ abstract class Player implements GameCommunication {
    * @param object $card
    *   Card クラスのインスタンスオブジェクト.
    */
-  public function addCard(Card $card) {
+  public function takeCard(Card $card) {
     $this->cards[] = $card;
   }
 

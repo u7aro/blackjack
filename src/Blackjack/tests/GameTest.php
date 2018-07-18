@@ -6,11 +6,14 @@ use Blackjack\Game;
 use Blackjack\Card;
 
 /**
- * ゲームクラスのテストを行うクラス.
+ * Game クラスのテストを行うクラス.
  */
 class GameTest extends \PHPUnit\Framework\TestCase {
 
-  static function forTestCalculateSum() {
+  /**
+   * testGetPoints() のデータプロバイダ.
+   */
+  static function forTestGetPoints() {
     return [
       '2, 3 の組み合わせは 5 として計算' => [
         5, [new Card('S', 2), new Card('H', 3)],
@@ -28,14 +31,17 @@ class GameTest extends \PHPUnit\Framework\TestCase {
   }
 
   /**
-   * ポイント計算が正しく行われているかテスト.
-   * @dataProvider forTestCalculateSum
+   * getPoints() の返り値がブラックジャックのルールに則ったポイントとなるかテスト.
+   * @dataProvider forTestGetPoints
    */
-  public function testCalculateSum($excepted, $cards) {
-    $this->assertEquals($excepted, Game::calculateSum($cards));
+  public function testGetPoints($excepted, $cards) {
+    $this->assertEquals($excepted, Game::getPoints($cards));
   }
 
-  static function forTestCalculateMinSum() {
+  /**
+   * testGetMinPoints() のデータプロバイダ.
+   */
+  static function forTestGetMinPoints() {
     return [
       '2, 11 の組み合わせは 12 として計算' => [
         12, [new Card('S', 2), new Card('H', 11)],
@@ -62,11 +68,11 @@ class GameTest extends \PHPUnit\Framework\TestCase {
   }
 
   /**
-   * ポイント計算が期待通りかテスト.
-   * @dataProvider forTestCalculateMinSum
+   * getMinPoints() の返り値がブラックジャックのルールに則ったポイントとなるかテスト.
+   * @dataProvider forTestGetMinPoints
    */
-  public function testCalculateMinSum($excepted, $cards) {
-    $this->assertEquals($excepted, Game::calculateMinSum($cards));
+  public function testGetMinPoints($excepted, $cards) {
+    $this->assertEquals($excepted, Game::getMinPoints($cards));
   }
 
 }
