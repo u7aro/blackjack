@@ -220,30 +220,28 @@ class Game {
    * Player インスタンスにカードを引くか判断させる.
    */
   public function askDeal(Player $player) {
-    if (!$player->isStanding()) {
-      if ($player->needsOneMoreCard()) {
-        cli\line($player->getName() . ': %gHit%n');
-        $player->takeCard($this->deck->pullCard());
+    if ($player->needsOneMoreCard()) {
+      cli\line($player->getName() . ': %gHit%n');
+      $player->takeCard($this->deck->pullCard());
 
-        usleep(Game::MESSAGE_WAIT_TIME);
+      usleep(Game::MESSAGE_WAIT_TIME);
 
-        cli\out($player->getName() . ': '
-          . Game::formatHand($player->getCards())
-          . Game::formatHandScore($player->getCards()));
+      cli\out($player->getName() . ': '
+        . Game::formatHand($player->getCards())
+        . Game::formatHandScore($player->getCards()));
 
-        $sum = Game::getPoints($player->getCards());
-        // ブラックジャック(21)とバストした場合は強制的に終了.
-        if (21 <= $sum) {
-          $player->setStanding();
-        }
-        cli\line();
-        usleep(Game::MESSAGE_WAIT_TIME);
-      }
-      else {
+      $sum = Game::getPoints($player->getCards());
+      // ブラックジャック(21)とバストした場合は強制的に終了.
+      if (21 <= $sum) {
         $player->setStanding();
-        cli\line($player->getName() . ': %cStand%n');
-        usleep(Game::MESSAGE_WAIT_TIME);
       }
+      cli\line();
+      usleep(Game::MESSAGE_WAIT_TIME);
+    }
+    else {
+      $player->setStanding();
+      cli\line($player->getName() . ': %cStand%n');
+      usleep(Game::MESSAGE_WAIT_TIME);
     }
   }
 
@@ -299,7 +297,9 @@ class Game {
   public function doPlayersTurn() {
     do {
       foreach ($this->players as $player) {
-        $this->askDeal($player);
+        if (!$player->isStanding()) {
+          $this->askDeal($player);
+        }
       }
     } while (!$this->isEveryPlayerStanding());
   }
