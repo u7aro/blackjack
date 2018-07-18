@@ -77,25 +77,25 @@ class Game {
    */
   public static function getPoints(array $cards) {
     $num_aces = 0;
-    $point_sum = 0;
+    $points = 0;
     foreach ($cards as $card) {
       // エース(1)の計算は複雑なので後回しにして計算する.
-      $point = $card->getPoint();
-      if ($point == 1) {
+      $card_points = $card->getPoint();
+      if ($card_points == 1) {
         $num_aces++;
       }
       else {
-        $point_sum += $point;
+        $points += $card_points;
       }
     }
 
     // エースがある場合は手札の合計に応じて加算する数値を変動.
     for ($num_aces_i = 0; $num_aces_i < $num_aces; $num_aces_i++) {
       // 手札の合計が11未満の場合は11として数え、それ以上の場合は1として数える.
-      $point_sum += ($point_sum < 11) ? 11 : 1;
+      $points += ($points < 11) ? 11 : 1;
     }
 
-    return $point_sum;
+    return $points;
   }
 
   /**
@@ -108,11 +108,11 @@ class Game {
    *   手札の合計値.
    */
   public static function getMinPoints(array $cards) {
-    $point_sum = 0;
+    $points = 0;
     foreach ($cards as $card) {
-      $point_sum += $card->getPoint();
+      $points += $card->getPoint();
     }
-    return $point_sum;
+    return $points;
   }
 
   /**
@@ -184,15 +184,15 @@ class Game {
   }
 
   public function isPlayerWin(Player $player) {
-    $dealer_sum = Game::getPoints($this->dealer->getCards());
-    $player_sum = Game::getPoints($player->getCards());
+    $dealer_points = Game::getPoints($this->dealer->getCards());
+    $player_points = Game::getPoints($player->getCards());
 
     // プレイヤーがバストした場合またはディーラーのポイントを下回る場合は負け.
-    if (21 < $player_sum || ($dealer_sum <= 21 && $player_sum < $dealer_sum)) {
+    if (21 < $player_points || ($dealer_points <= 21 && $player_points < $dealer_points)) {
       return 'lose';
     }
     // ディーラーがバストした場合またはディーラーのポイントを上回った場合は勝ち.
-    elseif (21 < $dealer_sum || $dealer_sum < $player_sum) {
+    elseif (21 < $dealer_points || $dealer_points < $player_points) {
       return 'win';
     }
 
