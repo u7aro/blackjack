@@ -17,20 +17,20 @@ class Deck {
   /**
    * Deck オブジェクトを構築する.
    *
-   * @param int $num_decks
+   * @param int $num_packs
    *   生成するデッキの数.
    */
-  public function __construct($num_decks = 1) {
-    $this->cards = Deck::generateCards($num_decks);
+  public function __construct($num_packs = 1) {
+    $this->cards = Deck::generateCards($num_packs);
     shuffle($this->cards);
   }
 
   /**
    * 指定された数だけカードデッキを生成する.
    */
-  public static function generateCards($num_decks = 1) {
+  public static function generateCards($num_packs = 1) {
     $cards = [];
-    for ($num_decks_i = 0; $num_decks_i < $num_decks; $num_decks_i++) {
+    for ($num_packs_i = 0; $num_packs_i < $num_packs; $num_packs_i++) {
       // 各アルファベットの意味:
       //   S: スペード, D: ダイヤ, H: ハート, C: クラブ
       foreach (['S', 'D', 'H', 'C'] as $suit) {

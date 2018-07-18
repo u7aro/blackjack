@@ -10,9 +10,9 @@ use cli;
 class Game {
 
   /**
-   * メッセージを表示する際の待ち時間. 単位はミリセコンド(100万分の1秒).
+   * 次の処理を実行する待ち時間. 単位はミリセコンド(100万分の1秒).
    */
-  const MESSAGE_WAIT_TIME = 500000;
+  private $waitingTime;
 
   /**
    * ディーラークラスのインスタンスオブジェクト.
@@ -33,7 +33,7 @@ class Game {
    *
    * @var int
    */
-  private $num_decks;
+  private $num_packs;
 
   /**
    * ゲームで使用する Deck クラスのインスタンスオブジェクト.
@@ -44,9 +44,15 @@ class Game {
 
   /**
    * Game オブジェクトの組み立て.
+   *
+   * @param int $num_packs
+   *   使用するカードのパック数.
    */
-  public function __construct($num_decks) {
-    $this->num_decks = $num_decks;
+  public function __construct($num_packs) {
+    $this->num_packs = $num_packs;
+
+    // 規定のインターフェイス(GameCommunication)を持ったプレイヤーをゲームに追加.
+    $this->addDealer(New Dealer('ディーラー'));
   }
 
   /**
@@ -223,7 +229,7 @@ class Game {
       cli\line($player->getName() . ': %gHit%n');
       $player->takeCard($this->deck->pullCard());
 
-      usleep(Game::MESSAGE_WAIT_TIME);
+      $this->wait();
       cli\out($player->getName() . ': '
         . Game::formatHand($player->getCards())
         . Game::formatHandScore($player->getCards()));
@@ -234,12 +240,12 @@ class Game {
         $player->setStanding();
       }
       cli\line();
-      usleep(Game::MESSAGE_WAIT_TIME);
+      $this->wait();
     }
     else {
       $player->setStanding();
       cli\line($player->getName() . ': %cStand%n');
-      usleep(Game::MESSAGE_WAIT_TIME);
+      $this->wait();
     }
   }
 
@@ -250,8 +256,8 @@ class Game {
     // 残りのカード枚数が `参加プレイヤー x 5枚以下` になったらデッキをリセット.
     $num_cards_deck_reset_limit = count($this->players) * 5;
     if (!isset($this->deck) || count($this->deck->getCards()) < $num_cards_deck_reset_limit) {
-      $this->deck = new Deck($this->num_decks);
-      cli\line('デッキを新しく生成しました');
+      $this->deck = new Deck($this->num_packs);
+      cli\line($this->num_packs . '組のカードを使って新しくデッキを生成しました');
       // TODO:
       // 参加プレイヤーにデッキをリセットしたことを伝える(AI用).
     }
@@ -319,19 +325,36 @@ class Game {
     do {
       $round = isset($round) ? ($round + 1) : 1;
       cli\line('Round ' . $round . ' スタート');
-      usleep(Game::MESSAGE_WAIT_TIME);
+      $this->wait();
       $this->prepareDeck();
       $this->dealInitCards();
       $this->printAllHands($is_players_turn = TRUE);
-      usleep(Game::MESSAGE_WAIT_TIME);
+      $this->wait();
       $this->doPlayersTurn();
       $this->doDealerTurn();
       $this->showRoundResults();
       cli\line('Round ' . $round . ' 終了');
       $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
     } while($continue);
-    usleep(Game::MESSAGE_WAIT_TIME);
+    $this->wait();
     cli\line('また遊んでね★ミ');
+  }
+
+  /**
+   * 待ち時間をセットする.
+   *
+   * @param int $time
+   *   待ち時間のミリセコンド秒.
+   */
+  public function setWaitingTime($time) {
+    $this->waitingTime = $time;
+  }
+
+  /**
+   * 設定されている時間だけ待つ.
+   */
+  public function wait() {
+    usleep($this->waitingTime);
   }
 
 }

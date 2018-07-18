@@ -9,18 +9,38 @@ namespace Blackjack;
 
 require 'vendor/autoload.php';
 
-$num_decks = 1;
-$game = New Game($num_decks);
+// コンソールオプションの設定.
+$strict = in_array('--strict', $_SERVER['argv']);
+$arguments = new \cli\Arguments(compact('strict'));
+$arguments->addFlag(array('help', 'h'), 'Show this help screen');
+$arguments->addOption(array('name', 'n'), array(
+	'default'     => 'You',
+  'description' => 'あなたの名前を設定します'));
+$arguments->addOption(array('wait', 'w'), array(
+	'default'     => 500000,
+  'description' => '処理を実行する時の待ち時間(ms)を設定します'));
+$arguments->addOption(array('num-ai', 'a'), array(
+	'default'     => 0,
+  'description' => 'AIプレイヤーの数を設定します'));
+$arguments->addOption(array('pack', 'p'), array(
+	'default'     => 1,
+  'description' => '使用するカードのパック数を設定します'));
+$arguments->parse();
 
-// 規定のインターフェイス(GameCommunication)を持ったプレイヤーをゲームに追加.
-$dealer = New Dealer('ディーラー');
-$game->addDealer($dealer);
+if ($arguments['help']) {
+	echo $arguments->getHelpScreen();
+  echo "\n\n";
+  exit;
+}
 
-$human = New Human('あなた');
+$game = New Game($arguments['pack']);
+$human = New Human($arguments['name']);
 $game->addPlayer($human);
-
-// 2人以上のプレイヤーを追加することも可能.
-$ai_player = New AiPlayer('AI Player');
-$game->addPlayer($ai_player);
-
+if ($arguments['num-ai']) {
+  for ($ai_serial = 1; $ai_serial <= $arguments['num-ai']; $ai_serial++) {
+    $name = 'AI Player ' . $ai_serial;
+    $game->addPlayer(New AiPlayer($name));
+  }
+}
+$game->setWaitingTime($arguments['wait']);
 $game->start();
