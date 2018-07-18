@@ -11,7 +11,7 @@
 
 Composer を使って必要なライブラリをインストールしてください。
 
-PHPUnit などの開発用のライブラリを入れる場合:
+PHPUnit などの開発用のライブラリも入れる場合:
 
 ```shell
 composer install
@@ -38,6 +38,18 @@ php blackjack.php
 ```shell
 ./vendor/bin/phpunit
 ```
+
+## PHPDocumentor を使ったドキュメントの生成方法
+
+本ファイルのソースコードは [PHPDocumentor](https://www.phpdoc.org/) を使ってドキュメントを自動生成することが可能です。
+
+次のコマンドを実行することで `output` ディレクトリにドキュメント群が生成されます。
+
+```shell
+./vendor/bin/phpdoc -d src
+````
+
+ブラウザで `output/index.html` のファイルを開くことでドキュメントを閲覧することができます。
 
 ## 実装の解説
 
