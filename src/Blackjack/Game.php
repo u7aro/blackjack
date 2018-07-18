@@ -267,8 +267,8 @@ class Game {
    * デッキの状態を確認し、必要に応じてデッキを新しく準備する.
    */
   public function prepareDeck() {
-    // 残りのカード枚数が `参加プレイヤー x 5枚以下` になったらデッキをリセット.
-    $num_cards_deck_reset_limit = count($this->players) * 5;
+    // 残りのカード枚数が `(参加プレイヤー + ディーラー) x 5枚以下` になったらデッキをリセット.
+    $num_cards_deck_reset_limit = (count($this->players) + 1) * 5;
     if (!isset($this->deck) || count($this->deck->getCards()) < $num_cards_deck_reset_limit) {
       $this->deck = new Deck($this->num_packs);
       cli\line($this->num_packs . '組のカードを使って新しくデッキを生成しました');
