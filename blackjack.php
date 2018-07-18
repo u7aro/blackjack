@@ -14,16 +14,16 @@ $strict = in_array('--strict', $_SERVER['argv']);
 $arguments = new \cli\Arguments(compact('strict'));
 $arguments->addFlag(array('help', 'h'), 'Show this help screen');
 $arguments->addOption(array('name', 'n'), array(
-	'default'     => 'You',
+  'default'     => 'You',
   'description' => 'あなたの名前を設定します'));
 $arguments->addOption(array('wait', 'w'), array(
-	'default'     => 500000,
+  'default'     => 500000,
   'description' => '処理を実行する時の待ち時間(ms)を設定します'));
 $arguments->addOption(array('num-ai', 'a'), array(
-	'default'     => 0,
+  'default'     => 0,
   'description' => 'AIプレイヤーの数を設定します'));
 $arguments->addOption(array('pack', 'p'), array(
-	'default'     => 1,
+  'default'     => 1,
   'description' => '使用するカードのパック数を設定します'));
 $arguments->parse();
 
