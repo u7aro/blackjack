@@ -63,7 +63,21 @@ class Card {
    *   - 'D5' ダイヤの5
    */
   public function getString() {
-    return sprintf('%s%02s', $this->suit, $this->number);
+    switch ($this->suit) {
+      case 'S': $suit = '♠ '; break;
+      case 'D': $suit = '♦ '; break;
+      case 'H': $suit = '♥ '; break;
+      case 'C': $suit = '♣ '; break;
+    }
+
+    switch ($this->number) {
+      case '11': $number = 'J'; break;
+      case '12': $number = 'Q'; break;
+      case '13': $number = 'K'; break;
+      default:   $number = $this->number;
+    }
+
+    return $suit . $number;
   }
 
   public function getSuit() {
