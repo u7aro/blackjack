@@ -89,10 +89,39 @@ abstract class Player implements GameCommunication {
 
   /**
    * プレイヤーの状態を初期化する.
+   *
+   * @see Game::resetRound()
    */
-  final public function initRound() {
+  final public function resetRound() {
     $this->cards = [];
     $this->isStanding = FALSE;
+  }
+
+  /**
+   * ゲーム中にオープンしたカードの情報を記憶する.
+   *
+   * 場に公開状態のカードが出るたびに呼び出されるメソッド. AI の計算などに利用する想定.
+   * 自分の手札やディーラーが公開した手札も含まれる.
+   *
+   * @param object $card
+   *   Card クラスのインスタンス.
+   * @param bool $is_dealers_first
+   *   ディーラーが公開した一枚目のカードである場合は TRUE、そうではない場合は FALSE.
+   *
+   * @see Game::dealInitialCards()
+   */
+  public function lookOpenedCard($card, $is_dealers_first) {
+  }
+
+  /**
+   * デッキが新しく生成された時に通知を受け取る AI 用のフック.
+   *
+   * @param int $num_card_packs
+   *   デッキに使用されるカードのパック数.
+   *
+   * @see Game::prepareDeck()
+   */
+  public function notifyResetDeck($num_card_packs) {
   }
 
 }

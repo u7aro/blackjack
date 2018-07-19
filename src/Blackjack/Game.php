@@ -243,7 +243,9 @@ class Game {
   public function askDeal(Player $player) {
     if ($player->needsOneMoreCard()) {
       cli\line($player->getName() . ': %gHit%n');
-      $player->takeCard($this->deck->pullCard());
+      $card = $this->deck->pullCard();
+      $player->takeCard($card);
+      $this->showCardAllPlayers(clone $card);
 
       $this->wait();
       cli\out($player->getName() . ': ' . self::formatHand($player->getCards()));
@@ -272,26 +274,52 @@ class Game {
     if (!isset($this->deck) || count($this->deck->getCards()) < $num_cards_deck_reset_limit) {
       $this->deck = new Deck($this->num_packs);
       cli\line($this->num_packs . '組のカードを使って新しくデッキを生成しました');
-      // TODO:
-      // 参加プレイヤーにデッキをリセットしたことを伝える(AI用).
+      // 参加プレイヤー全員にデッキをリセットしたことを伝える(AI用).
+      foreach ($this->players as $player){
+        $player->notifyResetDeck($this->num_packs);
+      }
+    }
+  }
+
+  /**
+   * 場に出たカードの情報を全てのプレイヤーインスタンスに伝える. AI 用のフック.
+   *
+   * @param object $card
+   *   Card クラスのインスタンス. 安全性を考えると渡されるインスタンスはクローンされた
+   *   ものがが望ましい.
+   * @param bool $is_dealers
+   *   ディーラーの手札の場合は TRUE.
+   */
+  private function showCardAllPlayers($card, $is_dealers = FALSE) {
+    foreach ($this->players as $player) {
+      $player->lookOpenedCard(clone $card, $is_dealers);
+    }
+  }
+
+  /**
+   * ディーラーとプレイヤーがラウンドで使用したカードと状態を初期値に戻す.
+   */
+  private function resetRound() {
+    $participants = array_merge([$this->dealer], $this->players);
+    foreach ($participants as $participant) {
+      $participant->resetRound();
     }
   }
 
   /**
    * 最初のカードを各プレイヤーに2枚ずつ配り、画面に出力する.
    */
-  public function dealInitCards() {
-    // ディーラーとプレイヤーの状態を初期化してカードを2枚ずつ配る.
-    // Note: ディーラーとプレイヤーは同じ抽象クラスを継承しているため、同じメソッドが
-    // 利用できる.
+  private function dealInitialCards() {
     $participants = array_merge([$this->dealer], $this->players);
-    foreach ($participants as $participant) {
-      $participant->initRound();
-      for ($num_card_i = 0; $num_card_i < 2; $num_card_i++) {
+    for ($deal_card_round = 1; $deal_card_round <= 2; $deal_card_round++) {
+      foreach ($participants as $participant_key => $participant) {
+        $is_dealer = ($participant_key == 0);
         $card = $this->deck->pullCard();
+        // ディーラーでは無い場合またはカード配りが2週目の場合.
+        if (!$is_dealer || $deal_card_round === 2) {
+          $this->showCardAllPlayers(clone $card, $is_dealer);
+        }
         $participant->takeCard($card);
-        // TODO:
-        // カードを受け取っていない他のプレイヤーにも場に出たカードの情報を伝える(AI用).
       }
     }
 
@@ -347,8 +375,9 @@ class Game {
       $round = isset($round) ? ($round + 1) : 1;
       cli\line('Round ' . $round . ' スタート');
       $this->wait();
+      $this->resetRound();
       $this->prepareDeck();
-      $this->dealInitCards();
+      $this->dealInitialCards();
       $this->wait();
       $this->doPlayersTurn();
       $this->doDealerTurn();
@@ -356,7 +385,6 @@ class Game {
       cli\line('Round ' . $round . ' 終了');
       $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
     } while($continue);
-    $this->wait();
     $this->printEndingMessage();
   }
 
