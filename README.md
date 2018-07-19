@@ -4,20 +4,20 @@
 
 ## 必須条件
 
-- PHP 5.6 以上のみで動作します。
-- ライブラリの管理に [Composer](https://getcomposer.org/) を利用しているため、プログラムの実行前にインストール作業が必要です。
+- PHP 5.6 以上のみで動作します。`php` コマンドを実行できるようにしてください。
+- ライブラリの管理に [Composer](https://getcomposer.org/) を利用していますので、`composer` コマンドを実行できるようにしてください。
 
 ## インストール方法
 
-Composer を使って必要なライブラリをインストールしてください。
+プログラムを起動するために Composer を使って必要なライブラリをインストールします。
 
-PHPUnit などの開発用のライブラリも入れる場合:
+PHPUnit や PHPDocumentor などの開発用のアプリケーションも入れる場合:
 
 ```shell
 composer install
 ```
 
-開発用のライブラリを入れない場合
+開発用のライブラリを入れない場合:
 
 ```shell
 composer install --no-dev
@@ -59,7 +59,7 @@ php blackjack.php --help
 
 ブラウザで `output/index.html` のファイルを開くことでドキュメントを閲覧することができます。
 
-クラス相関図も生成したい場合は Graphviz が必要となります。OS X で Homebrew が入っている場合は次のコマンドでインストールすることが可能です。
+クラス相関図も表示したい場合は、ドキュメントを生成する前に Graphviz をインストールしておく必要があります。OS X で Homebrew が入っている環境では次のコマンドでインストールすることが可能です。
 
 ```shell
 brew install Graphviz
