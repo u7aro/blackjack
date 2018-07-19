@@ -56,7 +56,7 @@ class Game {
   }
 
   /**
-   * ロゴを出力する.
+   * ゲーム開始時用のロゴを出力する.
    */
   public function printLogo() {
     cli\line();
@@ -73,7 +73,7 @@ class Game {
   }
 
   /**
-   * ロゴを出力する.
+   * ゲーム終了時用のメッセージを出力する.
    */
   public function printEndingMessage() {
     cli\line();
@@ -173,6 +173,17 @@ class Game {
     return TRUE;
   }
 
+  /**
+   * 手札を整形して文字列を返す.
+   *
+   * @param array $cards
+   *   Card インスタンスの配列.
+   * @param bool $first_card_hides
+   *   一枚目のカードを非表示にするか真偽値で設定.
+   *
+   * @return string
+   *   `[S01]` のようにカードを模した文字列.
+   */
   public static function formatHand(array $cards, $first_card_hides = FALSE) {
     $string = '';
     foreach ($cards as $card) {
@@ -187,12 +198,14 @@ class Game {
     return $string;
   }
 
+  /**
+   * 全プレイヤーの手札を画面に出力する.
+   *
+   * @param bool $is_players_turn
+   */
   public function printAllHands($is_players_turn = FALSE) {
     $message = $this->dealer->getName() . ': '
       . Game::formatHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
-    if (!$is_players_turn) {
-      $message .= ' (' . Game::formatCardsPoint($this->dealer->getCards()) . ')';
-    }
     cli\line($message);
 
     foreach ($this->players as $player) {
