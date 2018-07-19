@@ -50,8 +50,6 @@ class Game {
    */
   public function __construct($num_packs) {
     $this->num_packs = $num_packs;
-
-    // 規定のインターフェイス(GameCommunication)を持ったプレイヤーをゲームに追加.
     $this->addDealer(New Dealer('ディーラー'));
   }
 
@@ -198,23 +196,6 @@ class Game {
     return $string;
   }
 
-  /**
-   * 全プレイヤーの手札を画面に出力する.
-   *
-   * @param bool $is_players_turn
-   */
-  public function printAllHands($is_players_turn = FALSE) {
-    $message = $this->dealer->getName() . ': '
-      . self::formatHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
-    cli\line($message);
-
-    foreach ($this->players as $player) {
-      cli\line($player->getName() . ': '
-        . self::formatHand($player->getCards())
-        . self::formatHandScore($player->getCards()));
-    }
-  }
-
   public function isPlayerWin(Player $player) {
     $dealer_points = self::getPoints($this->dealer->getCards());
     $player_points = self::getPoints($player->getCards());
@@ -290,7 +271,7 @@ class Game {
   }
 
   /**
-   * 最初のカードを各プレイヤーに2枚ずつ配る.
+   * 最初のカードを各プレイヤーに2枚ずつ配り、画面に出力する.
    */
   public function dealInitCards() {
     // ディーラーとプレイヤーの状態を初期化してカードを2枚ずつ配る.
@@ -305,6 +286,16 @@ class Game {
         // TODO:
         // カードを受け取っていない他のプレイヤーにも場に出たカードの情報を伝える(AI用).
       }
+    }
+
+    // 配られたカードを画面出力する.
+    $message = $this->dealer->getName() . ': '
+      . self::formatHand($this->dealer->getCards(), TRUE);
+    cli\line($message);
+    foreach ($this->players as $player) {
+      cli\line($player->getName() . ': '
+        . self::formatHand($player->getCards())
+        . self::formatHandScore($player->getCards()));
     }
   }
 
@@ -354,7 +345,6 @@ class Game {
       $this->wait();
       $this->prepareDeck();
       $this->dealInitCards();
-      $this->printAllHands($is_players_turn = TRUE);
       $this->wait();
       $this->doPlayersTurn();
       $this->doDealerTurn();
