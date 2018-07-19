@@ -15,8 +15,17 @@ class GameTest extends \PHPUnit\Framework\TestCase {
    */
   static function forTestGetPoints() {
     return [
-      '2, 3 の組み合わせは 5 として計算' => [
-        5, [new Card('S', 2), new Card('H', 3)],
+      '2, 2, 2 の組み合わせは 6 として計算' => [
+        6, [new Card('S', 2), new Card('C', 2), new Card('D', 2)],
+      ],
+      '4, 6, 1 の組み合わせは 21 として計算' => [
+        21, [new Card('S', 4), new Card('H', 6), new Card('H', 1)],
+      ],
+      '4, 6, 1, 1 の組み合わせは 12 として計算' => [
+        12, [new Card('S', 4), new Card('H', 6), new Card('H', 1), new Card('H', 1)],
+      ],
+      '2, 11 の組み合わせは 12 として計算' => [
+        12, [new Card('S', 2), new Card('H', 11)],
       ],
       '1, 10 の組み合わせは 21 として計算' => [
         21, [new Card('S', 1), new Card('H', 10)],

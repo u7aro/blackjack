@@ -95,8 +95,9 @@ class Game {
   public static function getPoints(array $cards) {
     $num_aces = 0;
     $points = 0;
+
     foreach ($cards as $card) {
-      // エース(1)の計算は複雑なので後回しにして計算する.
+      // エースが含まれている場合は数だけ数えて計算を後回しにする.
       $card_points = $card->getPoint();
       if ($card_points == 1) {
         $num_aces++;
@@ -106,10 +107,16 @@ class Game {
       }
     }
 
-    // エースがある場合は手札の合計に応じて加算する数値を変動.
-    for ($num_aces_i = 0; $num_aces_i < $num_aces; $num_aces_i++) {
-      // 手札の合計が11未満の場合は11として数え、それ以上の場合は1として数える.
-      $points += ($points < 11) ? 11 : 1;
+    if ($num_aces) {
+      // 1枚だけエースを 11 として数えて計算した時に、合計が 21 を超えなければ
+      // その数値を使う。超えてしまう場合はポイントにエースの枚数を加える.
+      $elevened_sum = $points + 11 + ($num_aces - 1);
+      if ($elevened_sum <= 21) {
+        $points = $elevened_sum;
+      }
+      else {
+        $points += $num_aces;
+      }
     }
 
     return $points;
