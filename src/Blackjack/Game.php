@@ -212,6 +212,12 @@ class Game {
     return $string;
   }
 
+  /**
+   * プレイヤーの勝敗判定を行う.
+   *
+   * @param object $player
+   *   Player クラスのインスタンス.
+   */
   public function isPlayerWin(Player $player) {
     $dealer_points = self::getPoints($this->dealer->getCards());
     $player_points = self::getPoints($player->getCards());
@@ -230,6 +236,9 @@ class Game {
 
   /**
    * Player インスタンスにカードを引くか判断させる.
+   *
+   * @param object $player
+   *   Player クラスのインスタンス.
    */
   public function askDeal(Player $player) {
     if ($player->needsOneMoreCard()) {
