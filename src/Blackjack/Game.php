@@ -172,24 +172,40 @@ class Game {
   }
 
   /**
-   * 手札を整形して文字列を返す.
+   * 手札を見やすい文字列に整形して返す.
    *
    * @param array $cards
    *   Card インスタンスの配列.
-   * @param bool $first_card_hides
-   *   一枚目のカードを非表示にするか真偽値で設定.
+   * @param bool $show_points
+   *   手札のポイントを表示するかのフラグ.
+   * @param bool $hides_first_card
+   *   手札の一枚目のカードを非表示にするかのフラグ.
    *
    * @return string
-   *   `[S01]` のようにカードを模した文字列.
+   *   カードを模した文字列.
    */
-  public static function formatHand(array $cards, $first_card_hides = FALSE) {
+  public static function formatHand(array $cards, $show_points = TRUE, $hides_first_card = FALSE) {
     $string = '';
     foreach ($cards as $card) {
-      if ($first_card_hides && empty($string)) {
-        $string .= '[???]';
+      if ($hides_first_card && empty($card_string)) {
+        $card_string = '???';
       }
       else {
-        $string .= '[' . $card->getString() . ']';
+        $card_string = $card->getString();
+      }
+      $string .= "[$card_string]";
+    }
+
+    if ($show_points) {
+      $min_points = self::getMinPoints($cards);
+      $points = self::getPoints($cards);
+      $output_points = ($min_points == $points) ? $points : $min_points . '/' . $points;
+      $string .= "(%m$output_points%n)";
+      if ($points == 21) {
+        $string .= ' %y%FBlackjack%n';
+      }
+      elseif (21 < $points) {
+        $string .= ' %rBust!%n';
       }
     }
 
@@ -212,22 +228,6 @@ class Game {
     return 'draw';
   }
 
-  public function formatHandScore($cards) {
-    $min_points = self::getMinPoints($cards);
-    $points = self::getPoints($cards);
-    $output_points = ($min_points == $points) ? $points : $min_points . '/' . $points;
-    $output = "(%m$output_points%n)";
-
-    if ($points == 21) {
-      $output .= ' %y%FBlackjack%n';
-    }
-    elseif (21 < $points) {
-      $output .= ' %rBust!%n';
-    }
-
-    return $output;
-  }
-
   /**
    * Player インスタンスにカードを引くか判断させる.
    */
@@ -237,9 +237,7 @@ class Game {
       $player->takeCard($this->deck->pullCard());
 
       $this->wait();
-      cli\out($player->getName() . ': '
-        . self::formatHand($player->getCards())
-        . self::formatHandScore($player->getCards()));
+      cli\out($player->getName() . ': ' . self::formatHand($player->getCards()));
 
       $points = self::getPoints($player->getCards());
       // ブラックジャック(21)とバストした場合は強制的に終了.
@@ -289,13 +287,10 @@ class Game {
     }
 
     // 配られたカードを画面出力する.
-    $message = $this->dealer->getName() . ': '
-      . self::formatHand($this->dealer->getCards(), TRUE);
+    $message = $this->dealer->getName() . ': ' . self::formatHand($this->dealer->getCards(), FALSE, TRUE);
     cli\line($message);
     foreach ($this->players as $player) {
-      cli\line($player->getName() . ': '
-        . self::formatHand($player->getCards())
-        . self::formatHandScore($player->getCards()));
+      cli\line($player->getName() . ': ' . self::formatHand($player->getCards()));
     }
   }
 
