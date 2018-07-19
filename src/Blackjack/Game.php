@@ -205,19 +205,19 @@ class Game {
    */
   public function printAllHands($is_players_turn = FALSE) {
     $message = $this->dealer->getName() . ': '
-      . Game::formatHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
+      . self::formatHand($this->dealer->getCards(), $first_card_hides = $is_players_turn);
     cli\line($message);
 
     foreach ($this->players as $player) {
       cli\line($player->getName() . ': '
-        . Game::formatHand($player->getCards())
-        . Game::formatHandScore($player->getCards()));
+        . self::formatHand($player->getCards())
+        . self::formatHandScore($player->getCards()));
     }
   }
 
   public function isPlayerWin(Player $player) {
-    $dealer_points = Game::getPoints($this->dealer->getCards());
-    $player_points = Game::getPoints($player->getCards());
+    $dealer_points = self::getPoints($this->dealer->getCards());
+    $player_points = self::getPoints($player->getCards());
 
     // プレイヤーがバストした場合またはディーラーのポイントを下回る場合は負け.
     if (21 < $player_points || ($dealer_points <= 21 && $player_points < $dealer_points)) {
@@ -232,8 +232,8 @@ class Game {
   }
 
   public function formatHandScore($cards) {
-    $min_points = Game::getMinPoints($cards);
-    $points = Game::getPoints($cards);
+    $min_points = self::getMinPoints($cards);
+    $points = self::getPoints($cards);
     $output_points = ($min_points == $points) ? $points : $min_points . '/' . $points;
     $output = "(%m$output_points%n)";
 
@@ -257,10 +257,10 @@ class Game {
 
       $this->wait();
       cli\out($player->getName() . ': '
-        . Game::formatHand($player->getCards())
-        . Game::formatHandScore($player->getCards()));
+        . self::formatHand($player->getCards())
+        . self::formatHandScore($player->getCards()));
 
-      $points = Game::getPoints($player->getCards());
+      $points = self::getPoints($player->getCards());
       // ブラックジャック(21)とバストした場合は強制的に終了.
       if (21 <= $points) {
         $player->setStanding();
@@ -313,7 +313,7 @@ class Game {
    */
   public function showRoundResults() {
     cli\line("\n-- RESULT --");
-    $message = $this->dealer->getName() . ': ' . Game::formatHand($this->dealer->getCards());
+    $message = $this->dealer->getName() . ': ' . self::formatHand($this->dealer->getCards());
     cli\line($message);
     foreach ($this->players as $player) {
       $status = $this->isPlayerWin($player);
