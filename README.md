@@ -51,13 +51,13 @@ php blackjack.php --help
 
 本ファイルのソースコードは [PHPDocumentor](https://www.phpdoc.org/) を使ってドキュメントを自動生成することが可能です。
 
-次のコマンドを実行することで `output` ディレクトリにドキュメント群が生成されます。
+次のコマンドを実行することでドキュメント群が生成されます。
 
 ```shell
-./vendor/bin/phpdoc -d src
+./vendor/bin/phpdoc
 ````
 
-ブラウザで `output/index.html` のファイルを開くことでドキュメントを閲覧することができます。
+ブラウザで `./phpdoc/index.html` のファイルを開くことでドキュメントを閲覧することができます。
 
 クラス相関図も表示したい場合は、ドキュメントを生成する前に Graphviz をインストールしておく必要があります。OS X で Homebrew が入っている環境では次のコマンドでインストールすることが可能です。
 
