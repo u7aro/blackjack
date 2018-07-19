@@ -71,6 +71,7 @@ class Card {
     }
 
     switch ($this->number) {
+      case '1':  $number = 'A'; break;
       case '11': $number = 'J'; break;
       case '12': $number = 'Q'; break;
       case '13': $number = 'K'; break;
