@@ -78,7 +78,7 @@ class Card {
       default:   $number = $this->number;
     }
 
-    return $suit . $number;
+    return $suit . str_pad($number, 2, ' ', STR_PAD_LEFT);
   }
 
   public function getSuit() {

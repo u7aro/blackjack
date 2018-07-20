@@ -314,8 +314,7 @@ class Game {
    * 勝敗を表示する.
    */
   public function printRoundResults() {
-    cli\line();
-    cli\line('[ Round Result ]');
+    cli\line("\n[ Round Result ]");
 
     $headers = ['Name', 'Hand', 'Points', 'Result'];
     $data = [];
@@ -339,8 +338,7 @@ class Game {
     $table->setRows($data);
     $table->setRenderer(new \cli\table\Ascii([30, 6, 6, 6]));
     $table->display();
-    cli\line();
-  }
+ }
 
   /**
    * ゲームを開始する.
@@ -350,6 +348,7 @@ class Game {
     // ゲームを行うことができるため、同じループ処理でゲームを実行する.
     $participants = array_merge($this->players, [$this->dealer]);
     foreach ($participants as $participant) {
+      cli\line("\n%sのターン", $participant->getName());
       do {
         if ($participant->needsOneMoreCard()) {
           cli\line('%s: %gHit%n', $participant->getName());
@@ -390,8 +389,7 @@ class Game {
    * ゲーム全体のプレイヤーの戦績を表示する.
    */
   private function printGameStats() {
-    cli\line();
-    cli\line('[ Game Statistics ]');
+    cli\line("\n[ Game Statistics ]");
 
     $headers = ['Name', 'Wins', 'Draws', 'Losses'];
     $data = [];
@@ -406,7 +404,6 @@ class Game {
     $table->setRows($data);
     $table->setRenderer(new \cli\table\Ascii([30, 6, 6, 6]));
     $table->display();
-    cli\line();
   }
 
   /**
@@ -416,18 +413,18 @@ class Game {
     $this->printLogo();
     do {
       $round = isset($round) ? ($round + 1) : 1;
-      cli\line('Round %s スタート', $round);
+      cli\line("\n-- Round %s スタート --\n", $round);
       $this->wait();
       $this->resetRound();
       $this->prepareDeck();
       $this->dealInitialCards();
       $this->wait();
       $this->play();
+      cli\line("\n-- Round %s 終了 --", $round);
       $this->printRoundResults();
-      cli\line('Round %s 終了', $round);
       $this->addResult();
       $this->printGameStats();
-      $continue = cli\choose("ゲームを続行しますか", 'yn', 'y') == 'y';
+      $continue = cli\choose("\nゲームを続行しますか", 'yn', 'y') == 'y';
     } while($continue);
     $this->printEndingMessage();
   }
