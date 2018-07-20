@@ -365,8 +365,9 @@ class Game {
     $headers = ['Name', 'Wins', 'Draws', 'Losses'];
     $data = [];
     foreach ($this->players as $player) {
-      $stats = $player->getStats();
-      $data[] = array_values(array_merge(['name' => $player->getName()], $stats));
+      // \cli\table で使用するデータ配列は、連想配列では正常に動作しないため、配列を
+      // 結合して array_values() で添字を消す.
+      $data[] = array_values(([$player->getName()] + $player->getStats()));
     }
 
     $table = new \cli\Table();
