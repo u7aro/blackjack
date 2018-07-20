@@ -160,6 +160,26 @@ class Game {
   }
 
   /**
+   * 手札のポイントを見やすいように整形して返す
+   *
+   * @param array $cards
+   *   Card クラスのインスタンスの配列.
+   *
+   * @return string
+   *   エースが含まれるかつ場合に最小値・最大値どちらでも計算できる時に `2|12` の様に
+   *   整形した文字列.
+   */
+  protected static function formatPoints(array $cards) {
+    $string = '';
+    $min_points = self::getMinPoints($cards);
+    $points = self::getPoints($cards);
+    $output_points = ($min_points == $points) ? $points : $min_points . '|' . $points;
+    $string .= "$output_points";
+
+    return $string;
+  }
+
+  /**
    * 手札を見やすい文字列に整形して返す.
    *
    * @param array $cards
@@ -185,10 +205,8 @@ class Game {
     }
 
     if ($show_points) {
-      $min_points = self::getMinPoints($cards);
+      $string .= ' (' . self::formatPoints($cards) . ')';
       $points = self::getPoints($cards);
-      $output_points = ($min_points == $points) ? $points : $min_points . '/' . $points;
-      $string .= " (%m$output_points%n)";
       if ($points == 21) {
         $string .= ' %y%FBlackjack%n';
       }
@@ -292,7 +310,7 @@ class Game {
       $data[] = [
         $player->getName(),
         self::formatHand($player->getCards(), FALSE),
-        self::getPoints($player->getCards()),
+        self::formatPoints($player->getCards()),
       ];
     }
 
