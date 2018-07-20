@@ -366,13 +366,14 @@ class Game {
     $participants = array_merge($this->players, [$this->dealer]);
     foreach ($participants as $participant) {
       $this->wait();
-      cli\line("\n%sのターン", $participant->getName());
+      cli\line("\n[ %sのターン ]", $participant->getName());
+      $last_taken_cards = $participant->getCards();
 
       do {
         $this->wait();
-        cli\out('{:hand} ({:points}): ', [
-          'hand' => self::formatHand($participant->getCards()),
-          'points' => self::formatPoints($participant->getCards())
+        cli\out('{:last_taken_cards} ({:points}): ', [
+          'last_taken_cards' => self::formatHand($last_taken_cards),
+          'points' => self::formatPoints($participant->getCards()),
         ]);
         $this->wait();
 
@@ -394,6 +395,7 @@ class Game {
           cli\line('%gHit%n');
           $card = $this->deck->pullCard();
           $participant->takeCard($card);
+          $last_taken_cards = [$card];
           $this->showCardAllPlayers(clone $card);
         }
         else {
