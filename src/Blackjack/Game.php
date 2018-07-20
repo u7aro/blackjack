@@ -188,7 +188,7 @@ class Game {
       $min_points = self::getMinPoints($cards);
       $points = self::getPoints($cards);
       $output_points = ($min_points == $points) ? $points : $min_points . '/' . $points;
-      $string .= "(%m$output_points%n)";
+      $string .= " (%m$output_points%n)";
       if ($points == 21) {
         $string .= ' %y%FBlackjack%n';
       }
@@ -294,22 +294,52 @@ class Game {
   }
 
   /**
+   * 勝敗結果を装飾して返す.
+   *
+   * @param string $result
+   *   `win`, `draw`, `lose` のいずれかの文字列.
+   *
+   * @return string|null
+   *   勝敗の結果を装飾した文字列.
+   */
+  public static function formatResult($result) {
+    switch ($result) {
+      case 'win':  return '%gWin%n';
+      case 'draw': return '%yDraw%n';
+      case 'lose': return '%rLose%n';
+    }
+  }
+
+  /**
    * 勝敗を表示する.
    */
   public function printRoundResults() {
     cli\line();
-    cli\line("-- RESULT --");
-    cli\line('{:name}: {:hand}', [
-      'name' => $this->dealer->getName(),
-      'hand' => self::formatHand($this->dealer->getCards()),
-    ]);
+    cli\line('[ Round Result ]');
+
+    $headers = ['Name', 'Hand', 'Points', 'Result'];
+    $data = [];
+    $data[] = [
+      $this->dealer->getName(),
+      self::formatHand($this->dealer->getCards(), FALSE),
+      self::getPoints($this->dealer->getCards()),
+      '',
+    ];
     foreach ($this->players as $player) {
-      $status = $this->getResult($player);
-      cli\line('{:name} ... {:status}', [
-        'name' => $player->getName(),
-        'status' => $status,
-      ]);
+      $data[] = [
+        $player->getName(),
+        self::formatHand($player->getCards(), FALSE),
+        self::getPoints($player->getCards()),
+        self::formatResult($this->getResult($player)),
+      ];
     }
+
+    $table = new \cli\Table();
+    $table->setHeaders($headers);
+    $table->setRows($data);
+    $table->setRenderer(new \cli\table\Ascii([30, 6, 6, 6]));
+    $table->display();
+    cli\line();
   }
 
   /**
@@ -360,6 +390,7 @@ class Game {
    * ゲーム全体のプレイヤーの戦績を表示する.
    */
   private function printGameStats() {
+    cli\line();
     cli\line('[ Game Statistics ]');
 
     $headers = ['Name', 'Wins', 'Draws', 'Losses'];
@@ -375,6 +406,7 @@ class Game {
     $table->setRows($data);
     $table->setRenderer(new \cli\table\Ascii([30, 6, 6, 6]));
     $table->display();
+    cli\line();
   }
 
   /**
@@ -392,10 +424,10 @@ class Game {
       $this->wait();
       $this->play();
       $this->printRoundResults();
-      $this->addResult();
       cli\line('Round %s 終了', $round);
+      $this->addResult();
       $this->printGameStats();
-      $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
+      $continue = cli\choose("ゲームを続行しますか", 'yn', 'y') == 'y';
     } while($continue);
     $this->printEndingMessage();
   }
