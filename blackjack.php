@@ -26,7 +26,7 @@ $arguments->addOption(['num-ai', 'a'], [
   'description' => 'AIプレイヤーの数を設定します',
 ]);
 $arguments->addOption(['pack', 'p'], [
-  'default'     => 1,
+  'default'     => 6,
   'description' => 'デッキに使用するカードのパック数を設定します',
 ]);
 $arguments->parse();

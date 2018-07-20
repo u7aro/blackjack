@@ -160,25 +160,6 @@ class Game {
   }
 
   /**
-   * 全てのプレイヤーがスタンド状態であることを確認して真偽値で返す.
-   *
-   * @return bool
-   *   全てのプレイヤーがスタンド状態であれば TRUE 、そうではない場合は FALSE.
-   */
-  private function isEveryPlayerStanding() {
-    // ゲームに参加しているプレイヤーが一人でもゲームを続行している状態であれば、
-    // 即時 FALSE を返す.
-    foreach ($this->players as $player) {
-      if (!$player->isStanding()) {
-        return FALSE;
-      }
-    }
-
-    // 誰もゲームを続行していなければループを抜けて TRUE を返す.
-    return TRUE;
-  }
-
-  /**
    * 手札を見やすい文字列に整形して返す.
    *
    * @param array $cards
@@ -239,37 +220,6 @@ class Game {
     }
 
     return 'draw';
-  }
-
-  /**
-   * Player インスタンスにカードを引くか判断させる.
-   *
-   * @param object $player
-   *   Player クラスのインスタンス.
-   */
-  public function askDeal(Player $player) {
-    if ($player->needsOneMoreCard()) {
-      cli\line($player->getName() . ': %gHit%n');
-      $card = $this->deck->pullCard();
-      $player->takeCard($card);
-      $this->showCardAllPlayers(clone $card);
-
-      $this->wait();
-      cli\out($player->getName() . ': ' . self::formatHand($player->getCards()));
-
-      $points = self::getPoints($player->getCards());
-      // ブラックジャック(21)とバストした場合は強制的に終了.
-      if (21 <= $points) {
-        $player->setStanding();
-      }
-      cli\line();
-      $this->wait();
-    }
-    else {
-      $player->setStanding();
-      cli\line($player->getName() . ': %cStand%n');
-      $this->wait();
-    }
   }
 
   /**
@@ -352,25 +302,34 @@ class Game {
   }
 
   /**
-   * 全員がスタンド（カードを引くのをやめた）状態になるまで繰り返しカードを引かせる.
+   * ゲームを開始する.
    */
-  public function doPlayersTurn() {
-    do {
-      foreach ($this->players as $player) {
-        if (!$player->isStanding()) {
-          $this->askDeal($player);
+  public function play() {
+    // プレイヤーとディーラーは同じインターフェイスを持っていて共通のロジックで
+    // ゲームを行うことができるため、同じループ処理でゲームを実行する.
+    $participants = array_merge($this->players, [$this->dealer]);
+    foreach ($participants as $participant) {
+      do {
+        if ($participant->needsOneMoreCard()) {
+          cli\line($participant->getName() . ': %gHit%n');
+          $this->wait();
+          $card = $this->deck->pullCard();
+          $participant->takeCard($card);
+          $this->showCardAllPlayers(clone $card);
+          cli\line($participant->getName() . ': ' . self::formatHand($participant->getCards()));
+          // ブラックジャック(21)を達成した場合とバストした場合は強制的に終了.
+          $points = self::getPoints($participant->getCards());
+          if (21 <= $points) {
+            $participant->setStanding();
+          }
         }
-      }
-    } while (!$this->isEveryPlayerStanding());
-  }
-
-  /**
-   *  ディーラーのターン.
-   */
-  public function doDealerTurn() {
-    do {
-      $this->askDeal($this->dealer);
-    } while (!$this->dealer->isStanding());
+        else {
+          $participant->setStanding();
+          cli\line($participant->getName() . ': %cStand%n');
+        }
+        $this->wait();
+      } while(!$participant->isStanding());
+    }
   }
 
   /**
@@ -386,8 +345,7 @@ class Game {
       $this->prepareDeck();
       $this->dealInitialCards();
       $this->wait();
-      $this->doPlayersTurn();
-      $this->doDealerTurn();
+      $this->play();
       $this->showRoundResults();
       cli\line('Round ' . $round . ' 終了');
       $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
