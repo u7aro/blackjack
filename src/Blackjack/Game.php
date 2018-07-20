@@ -206,7 +206,7 @@ class Game {
    * @param object $player
    *   Player クラスのインスタンス.
    */
-  public function getWinningStatus(Player $player) {
+  public function getResult(Player $player) {
     $dealer_points = self::getPoints($this->dealer->getCards());
     $player_points = self::getPoints($player->getCards());
 
@@ -296,7 +296,7 @@ class Game {
   /**
    * 勝敗を表示する.
    */
-  public function showRoundResults() {
+  public function printRoundResults() {
     cli\line();
     cli\line("-- RESULT --");
     cli\line('{:name}: {:hand}', [
@@ -304,7 +304,7 @@ class Game {
       'hand' => self::formatHand($this->dealer->getCards()),
     ]);
     foreach ($this->players as $player) {
-      $status = $this->getWinningStatus($player);
+      $status = $this->getResult($player);
       cli\line('{:name} ... {:status}', [
         'name' => $player->getName(),
         'status' => $status,
@@ -347,6 +347,36 @@ class Game {
   }
 
   /**
+   * 全プレイヤーにゲームの結果を追加する.
+   */
+  private function addResult() {
+    foreach ($this->players as $player) {
+      $result = $this->getResult($player);
+      $player->addResult($result);
+    }
+  }
+
+  /**
+   * ゲーム全体のプレイヤーの戦績を表示する.
+   */
+  private function printGameStats() {
+    cli\line('[ Game Statistics ]');
+
+    $headers = ['Name', 'Wins', 'Draws', 'Losses'];
+    $data = [];
+    foreach ($this->players as $player) {
+      $stats = $player->getStats();
+      $data[] = array_values(array_merge(['name' => $player->getName()], $stats));
+    }
+
+    $table = new \cli\Table();
+    $table->setHeaders($headers);
+    $table->setRows($data);
+    $table->setRenderer(new \cli\table\Ascii([30, 6, 6, 6]));
+    $table->display();
+  }
+
+  /**
    * ゲームを開始して、ゲーム全体の流れを組み立てる.
    */
   public function start() {
@@ -360,8 +390,10 @@ class Game {
       $this->dealInitialCards();
       $this->wait();
       $this->play();
-      $this->showRoundResults();
+      $this->printRoundResults();
+      $this->addResult();
       cli\line('Round %s 終了', $round);
+      $this->printGameStats();
       $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
     } while($continue);
     $this->printEndingMessage();

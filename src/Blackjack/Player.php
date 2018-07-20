@@ -31,6 +31,27 @@ abstract class Player implements GameCommunication {
   protected $name = '';
 
   /**
+   * ゲーム全体を通して勝った回数.
+   *
+   * @var int
+   */
+  private $wins = 0;
+
+  /**
+   * ゲーム全体を通して引き分けになった回数.
+   *
+   * @var int
+   */
+  private $draws = 0;
+
+  /**
+   * ゲーム全体を通して負けた回数.
+   *
+   * @var int
+   */
+  private $losses = 0;
+
+  /**
    * Player オブジェクトの組み立て.
    *
    * @param string $name
@@ -122,6 +143,36 @@ abstract class Player implements GameCommunication {
    * @see Game::prepareDeck()
    */
   public function notifyResetDeck($num_card_packs) {
+  }
+
+  /**
+   * ゲームの結果を回数として記録する.
+   *
+   * @param string $result
+   *   勝ち `win`, 分け `draw`, 負け `lose` のいずれかの文字列.
+   */
+  public function addResult($result) {
+    switch ($result) {
+      case 'win':  $this->wins++;   break;
+      case 'draw': $this->draws++;  break;
+      case 'lose': $this->losses++; break;
+    }
+  }
+
+  /**
+   * 全てのゲームの戦績を配列で返す.
+   *
+   * @return array
+   *   `wins`, `draws`, `losses` をキーとしてカウントした配列.
+   *
+   *   配列の構造: `[ 'wins' => COUNT, 'draws' => COUNT, 'losses' => COUNT ]`
+   */
+  public function getStats() {
+    return [
+      'wins'   => $this->wins,
+      'draws'  => $this->draws,
+      'losses' => $this->losses,
+    ];
   }
 
 }
