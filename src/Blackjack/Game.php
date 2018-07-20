@@ -192,7 +192,7 @@ class Game {
    * @return string
    *   カードを模した文字列.
    */
-  public static function formatHand(array $cards, $show_points = TRUE, $hides_first_card = FALSE) {
+  public static function formatHand(array $cards, $hides_first_card = FALSE) {
     $string = '';
     foreach ($cards as $card) {
       if ($hides_first_card && empty($card_string)) {
@@ -202,17 +202,6 @@ class Game {
         $card_string = $card->getString();
       }
       $string .= "[$card_string]";
-    }
-
-    if ($show_points) {
-      $string .= ' (' . self::formatPoints($cards) . ')';
-      $points = self::getPoints($cards);
-      if ($points == 21) {
-        $string .= ' %y%FBlackjack%n';
-      }
-      elseif (21 < $points) {
-        $string .= ' %rBust!%n';
-      }
     }
 
     return $string;
@@ -303,13 +292,13 @@ class Game {
     $data = [];
     $data[] = [
       $this->dealer->getName(),
-      self::formatHand($this->dealer->getCards(), FALSE, TRUE),
+      self::formatHand($this->dealer->getCards(), TRUE),
       '?',
     ];
     foreach ($this->players as $player) {
       $data[] = [
         $player->getName(),
-        self::formatHand($player->getCards(), FALSE),
+        self::formatHand($player->getCards()),
         self::formatPoints($player->getCards()),
       ];
     }
@@ -348,14 +337,14 @@ class Game {
     $data = [];
     $data[] = [
       $this->dealer->getName(),
-      self::formatHand($this->dealer->getCards(), FALSE),
+      self::formatHand($this->dealer->getCards()),
       self::getPoints($this->dealer->getCards()),
       '',
     ];
     foreach ($this->players as $player) {
       $data[] = [
         $player->getName(),
-        self::formatHand($player->getCards(), FALSE),
+        self::formatHand($player->getCards()),
         self::getPoints($player->getCards()),
         self::formatResult($this->getResult($player)),
       ];
@@ -376,29 +365,41 @@ class Game {
     // ゲームを行うことができるため、同じループ処理でゲームを実行する.
     $participants = array_merge($this->players, [$this->dealer]);
     foreach ($participants as $participant) {
+      $this->wait();
       cli\line("\n%sのターン", $participant->getName());
+
       do {
+        $this->wait();
+        cli\out('{:hand} ({:points}): ', [
+          'hand' => self::formatHand($participant->getCards()),
+          'points' => self::formatPoints($participant->getCards())
+        ]);
+        $this->wait();
+
+        // ブラックジャック(21)を達成した時とバストした場合は、強制的にスタンド
+        // 状態にしてループを抜け終了.
+        $points = self::getPoints($participant->getCards());
+        if (21 <= $points) {
+          $participant->setStanding();
+          if ($points == 21) {
+            cli\line('%y%FBlackjack%n');
+          }
+          elseif (21 < $points) {
+            cli\line('%rBust!%n');
+          }
+          break;
+        }
+
         if ($participant->needsOneMoreCard()) {
-          cli\line('%s: %gHit%n', $participant->getName());
-          $this->wait();
+          cli\line('%gHit%n');
           $card = $this->deck->pullCard();
           $participant->takeCard($card);
           $this->showCardAllPlayers(clone $card);
-          cli\line('{:name}: {:hand}', [
-            'name' => $participant->getName(),
-            'hand' => self::formatHand($participant->getCards())]
-          );
-          // ブラックジャック(21)を達成した場合とバストした場合は強制的に終了.
-          $points = self::getPoints($participant->getCards());
-          if (21 <= $points) {
-            $participant->setStanding();
-          }
         }
         else {
           $participant->setStanding();
-          cli\line('%s: %cStand%n', $participant->getName());
+          cli\line('%cStand%n');
         }
-        $this->wait();
       } while(!$participant->isStanding());
     }
   }
@@ -446,7 +447,6 @@ class Game {
       $this->resetRound();
       $this->prepareDeck();
       $this->dealInitialCards();
-      $this->wait();
       $this->play();
       cli\line("\n-- Round %s 終了 --", $round);
       $this->printRoundResults();

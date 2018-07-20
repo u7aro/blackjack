@@ -18,7 +18,7 @@ $arguments->addOption(['name', 'n'], [
   'description' => 'あなたの名前を設定します',
 ]);
 $arguments->addOption(['wait', 'w'], [
-  'default' => 500000,
+  'default' => 400000,
   'description' => '処理を実行する時の待ち時間(ms)を設定します',
 ]);
 $arguments->addOption(['num-ai', 'a'], [
