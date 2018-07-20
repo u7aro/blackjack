@@ -206,7 +206,7 @@ class Game {
    * @param object $player
    *   Player クラスのインスタンス.
    */
-  public function isPlayerWin(Player $player) {
+  public function getWinningStatus(Player $player) {
     $dealer_points = self::getPoints($this->dealer->getCards());
     $player_points = self::getPoints($player->getCards());
 
@@ -230,7 +230,7 @@ class Game {
     $num_cards_deck_reset_limit = (count($this->players) + 1) * 5;
     if (!isset($this->deck) || count($this->deck->getCards()) < $num_cards_deck_reset_limit) {
       $this->deck = new Deck($this->num_packs);
-      cli\line($this->num_packs . '組のカードを使って新しくデッキを生成しました');
+      cli\line('%s組のカードを使って新しくデッキを生成しました', $this->num_packs);
       // 参加プレイヤー全員にデッキをリセットしたことを伝える(AI用).
       foreach ($this->players as $player){
         $player->notifyResetDeck($this->num_packs);
@@ -281,10 +281,15 @@ class Game {
     }
 
     // 配られたカードを画面出力する.
-    $message = $this->dealer->getName() . ': ' . self::formatHand($this->dealer->getCards(), FALSE, TRUE);
-    cli\line($message);
+    cli\line('{:name}: {:hand}', [
+      'name' => $this->dealer->getName(),
+      'hand' => self::formatHand($this->dealer->getCards(), FALSE, TRUE),
+    ]);
     foreach ($this->players as $player) {
-      cli\line($player->getName() . ': ' . self::formatHand($player->getCards()));
+      cli\line('{:name}: {:hand}', [
+        'name' => $player->getName(),
+        'hand' => self::formatHand($player->getCards()),
+      ]);
     }
   }
 
@@ -292,12 +297,18 @@ class Game {
    * 勝敗を表示する.
    */
   public function showRoundResults() {
-    cli\line("\n-- RESULT --");
-    $message = $this->dealer->getName() . ': ' . self::formatHand($this->dealer->getCards());
-    cli\line($message);
+    cli\line();
+    cli\line("-- RESULT --");
+    cli\line('{:name}: {:hand}', [
+      'name' => $this->dealer->getName(),
+      'hand' => self::formatHand($this->dealer->getCards()),
+    ]);
     foreach ($this->players as $player) {
-      $status = $this->isPlayerWin($player);
-      cli\line($player->getName() . ' ... ' . $status);
+      $status = $this->getWinningStatus($player);
+      cli\line('{:name} ... {:status}', [
+        'name' => $player->getName(),
+        'status' => $status,
+      ]);
     }
   }
 
@@ -311,12 +322,15 @@ class Game {
     foreach ($participants as $participant) {
       do {
         if ($participant->needsOneMoreCard()) {
-          cli\line($participant->getName() . ': %gHit%n');
+          cli\line('%s: %gHit%n', $participant->getName());
           $this->wait();
           $card = $this->deck->pullCard();
           $participant->takeCard($card);
           $this->showCardAllPlayers(clone $card);
-          cli\line($participant->getName() . ': ' . self::formatHand($participant->getCards()));
+          cli\line('{:name}: {:hand}', [
+            'name' => $participant->getName(),
+            'hand' => self::formatHand($participant->getCards())]
+          );
           // ブラックジャック(21)を達成した場合とバストした場合は強制的に終了.
           $points = self::getPoints($participant->getCards());
           if (21 <= $points) {
@@ -325,7 +339,7 @@ class Game {
         }
         else {
           $participant->setStanding();
-          cli\line($participant->getName() . ': %cStand%n');
+          cli\line('%s: %cStand%n', $participant->getName());
         }
         $this->wait();
       } while(!$participant->isStanding());
@@ -339,7 +353,7 @@ class Game {
     $this->printLogo();
     do {
       $round = isset($round) ? ($round + 1) : 1;
-      cli\line('Round ' . $round . ' スタート');
+      cli\line('Round %s スタート', $round);
       $this->wait();
       $this->resetRound();
       $this->prepareDeck();
@@ -347,7 +361,7 @@ class Game {
       $this->wait();
       $this->play();
       $this->showRoundResults();
-      cli\line('Round ' . $round . ' 終了');
+      cli\line('Round %s 終了', $round);
       $continue = cli\choose("--\nゲームを続行しますか", 'yn', 'y') == 'y';
     } while($continue);
     $this->printEndingMessage();
