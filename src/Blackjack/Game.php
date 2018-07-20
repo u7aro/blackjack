@@ -176,7 +176,7 @@ class Game {
     $string = '';
     foreach ($cards as $card) {
       if ($hides_first_card && empty($card_string)) {
-        $card_string = '???';
+        $card_string = '????';
       }
       else {
         $card_string = $card->getString();
@@ -281,16 +281,26 @@ class Game {
     }
 
     // 配られたカードを画面出力する.
-    cli\line('{:name}: {:hand}', [
-      'name' => $this->dealer->getName(),
-      'hand' => self::formatHand($this->dealer->getCards(), FALSE, TRUE),
-    ]);
+    $headers = ['Name', 'Hand', 'Points'];
+    $data = [];
+    $data[] = [
+      $this->dealer->getName(),
+      self::formatHand($this->dealer->getCards(), FALSE, TRUE),
+      '?',
+    ];
     foreach ($this->players as $player) {
-      cli\line('{:name}: {:hand}', [
-        'name' => $player->getName(),
-        'hand' => self::formatHand($player->getCards()),
-      ]);
+      $data[] = [
+        $player->getName(),
+        self::formatHand($player->getCards(), FALSE),
+        self::getPoints($player->getCards()),
+      ];
     }
+
+    $table = new \cli\Table();
+    $table->setHeaders($headers);
+    $table->setRows($data);
+    $table->setRenderer(new \cli\table\Ascii([30, 6, 6, 6]));
+    $table->display();
   }
 
   /**
