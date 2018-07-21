@@ -40,7 +40,7 @@ class Game {
    *
    * @var object
    */
-  protected $deck;
+  private $deck;
 
   /**
    * Game オブジェクトの組み立て.
@@ -169,7 +169,7 @@ class Game {
    *   エースが含まれるかつ場合に最小値・最大値どちらでも計算できる時に `2|12` の様に
    *   整形した文字列.
    */
-  protected static function formatPoints(array $cards) {
+  private static function formatPoints(array $cards) {
     $string = '';
     $min_points = self::getMinPoints($cards);
     $points = self::getPoints($cards);
