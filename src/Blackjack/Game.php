@@ -50,7 +50,7 @@ class Game {
    */
   public function __construct($num_packs) {
     $this->num_packs = $num_packs;
-    $this->addDealer(New Dealer('ディーラー'));
+    $this->dealer = New Dealer('Dealer');
   }
 
   /**
@@ -147,16 +147,6 @@ class Game {
    */
   public function addPlayer(Player $player) {
     $this->players[] = $player;
-  }
-
-  /**
-   * ディーラーをゲームに追加する.
-   *
-   * @param object $dealer
-   *   ディーラー用クラスのインスタンスオブジェクト.
-   */
-  public function addDealer(Dealer $dealer) {
-    $this->dealer = $dealer;
   }
 
   /**
@@ -274,6 +264,7 @@ class Game {
    * 最初のカードを各プレイヤーに2枚ずつ配り、画面に出力する.
    */
   private function dealInitialCards() {
+    // ディーラーとプレイヤー達を配列で結合して同じループで回す.
     $participants = array_merge([$this->dealer], $this->players);
     for ($deal_card_round = 1; $deal_card_round <= 2; $deal_card_round++) {
       foreach ($participants as $participant_key => $participant) {
@@ -290,11 +281,13 @@ class Game {
     // 配られたカードを画面出力する.
     $headers = ['Name', 'Hand', 'Pts'];
     $data = [];
+    // ディーラーの手札.
     $data[] = [
       $this->dealer->getName(),
       self::formatHand($this->dealer->getCards(), TRUE),
       '?',
     ];
+    // プレイヤー達の手札.
     foreach ($this->players as $player) {
       $data[] = [
         $player->getName(),
@@ -375,7 +368,7 @@ class Game {
     $participants = array_merge($this->players, [$this->dealer]);
     foreach ($participants as $participant) {
       $this->wait();
-      cli\line("\n[ %sのターン ]", $participant->getName());
+      cli\line("\n%sのターン!!", $participant->getName());
       $last_taken_cards = $participant->getCards();
 
       do {
