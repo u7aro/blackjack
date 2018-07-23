@@ -81,10 +81,21 @@ class Card {
     return $suit . str_pad($number, 2, ' ', STR_PAD_LEFT);
   }
 
+  /**
+   * カードの絵柄を表すアルファベットを返す.
+   *
+   * @return string
+   *   カードの絵柄.
+   */
   public function getSuit() {
     return $this->suit;
   }
 
+  /**
+   * カードの番号を返す.
+   * @return int
+   *   カードの番号. Aは1、J〜Kは11〜13になる.
+   */
   public function getNumber() {
     return $this->number;
   }
