@@ -288,7 +288,7 @@ class Game {
     }
 
     // 配られたカードを画面出力する.
-    $headers = ['Name', 'Hand', 'Points'];
+    $headers = ['Name', 'Hand', 'Pts'];
     $data = [];
     $data[] = [
       $this->dealer->getName(),
@@ -330,24 +330,33 @@ class Game {
   /**
    * 勝敗を表示する.
    */
-  public function printRoundResults() {
-    cli\line("\n[ Round Result ]");
+  public function printResults() {
+    cli\line("\n[ Results ]");
 
-    $headers = ['Name', 'Hand', 'Points', 'Result'];
+    $headers = ['Name', 'Hand', 'Pts', 'Result', 'W', 'D', 'L'];
     $data = [];
+
+    // ディーラーの行.
     $data[] = [
       $this->dealer->getName(),
       self::formatHand($this->dealer->getCards()),
       self::getPoints($this->dealer->getCards()),
       '',
+      '',
+      '',
+      '',
     ];
+
+    // プレイヤーの行.
     foreach ($this->players as $player) {
-      $data[] = [
+      $cols = [
         $player->getName(),
         self::formatHand($player->getCards()),
         self::getPoints($player->getCards()),
         self::formatResult($this->getResult($player)),
       ];
+      $row = array_merge($cols, $player->getStats());
+      $data[] = array_values($row);
     }
 
     $table = new \cli\Table();
@@ -417,27 +426,6 @@ class Game {
   }
 
   /**
-   * ゲーム全体のプレイヤーの戦績を表示する.
-   */
-  private function printGameStats() {
-    cli\line("\n[ Game Statistics ]");
-
-    $headers = ['Name', 'Wins', 'Draws', 'Losses'];
-    $data = [];
-    foreach ($this->players as $player) {
-      // \cli\table で使用するデータ配列は、連想配列では正常に動作しないため、配列を
-      // 結合して array_values() で添字を消す.
-      $data[] = array_values(([$player->getName()] + $player->getStats()));
-    }
-
-    $table = new \cli\Table();
-    $table->setHeaders($headers);
-    $table->setRows($data);
-    $table->setRenderer(new \cli\table\Ascii([30, 6, 6, 6]));
-    $table->display();
-  }
-
-  /**
    * ゲームを開始して、ゲーム全体の流れを組み立てる.
    */
   public function start() {
@@ -451,9 +439,8 @@ class Game {
       $this->dealInitialCards();
       $this->play();
       cli\line("\n-- Round %s 終了 --", $round);
-      $this->printRoundResults();
       $this->addResult();
-      $this->printGameStats();
+      $this->printResults();
       $continue = cli\choose("\nゲームを続行しますか", 'yn', 'y') == 'y';
     } while($continue);
     $this->printEndingMessage();
