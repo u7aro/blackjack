@@ -227,7 +227,7 @@ class Game {
     $num_cards_deck_reset_limit = (count($this->players) + 1) * 5;
     if (!isset($this->deck) || count($this->deck->getCards()) < $num_cards_deck_reset_limit) {
       $this->deck = new Deck($this->num_packs);
-      cli\line('%s組のカードを使って新しくデッキを生成しました', $this->num_packs);
+      cli\line('%s組のカードを使って新しくデッキを生成!!', $this->num_packs);
       // 参加プレイヤー全員にデッキをリセットしたことを伝える(AI用).
       foreach ($this->players as $player){
         $player->notifyResetDeck($this->num_packs);
@@ -425,16 +425,17 @@ class Game {
     $this->printLogo();
     do {
       $round = isset($round) ? ($round + 1) : 1;
-      cli\line("\n-- Round %s スタート --\n", $round);
+      cli\line("\nRound %s スタート!!\n", $round);
       $this->wait();
       $this->resetRound();
       $this->prepareDeck();
       $this->dealInitialCards();
       $this->play();
-      cli\line("\n-- Round %s 終了 --", $round);
+      $this->wait();
+      cli\line("\nRound %s 終了!!", $round);
       $this->addResult();
       $this->printResults();
-      $continue = cli\choose("\nゲームを続行しますか", 'yn', 'y') == 'y';
+      $continue = cli\choose("\nゲームを続行するか", 'yn', 'y') == 'y';
     } while($continue);
     $this->printEndingMessage();
   }
